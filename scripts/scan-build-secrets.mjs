@@ -11,7 +11,7 @@ const env = Object.fromEntries(
     .filter(Boolean)
     .map((m) => [m[1], m[2]]),
 );
-const secretNames = ["DATABASE_URL", "DATABASE_URL_UNPOOLED", "GEMINI_API_KEY", "SESSION_SECRET", "CRON_SECRET", "FOUNDER_ACCESS_CODE", "RESEND_API_KEY", "VERCEL_OIDC_TOKEN"];
+const secretNames = ["DATABASE_URL", "DATABASE_URL_UNPOOLED", "GEMINI_API_KEY", "SESSION_SECRET", "CRON_SECRET", "FOUNDER_ACCESS_CODE", "RESEND_API_KEY", "VERCEL_OIDC_TOKEN", "OPENROUTER_API_KEY"];
 const secrets = secretNames
   .filter((n) => env[n] && env[n].length >= 8)
   .map((n) => ({ name: n, value: env[n], host: n.startsWith("DATABASE") ? (env[n].match(/@([^/?]+)/) ?? [])[1] : null }));
