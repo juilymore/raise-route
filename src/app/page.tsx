@@ -3,9 +3,10 @@ import Link from "next/link";
 import { ActionCard } from "@/components/ActionCard";
 import { AiBanner } from "@/components/AiBanner";
 import { RouteMotif } from "@/components/brand/Logo";
+import { OpportunityMatrix } from "@/components/OpportunityMatrix";
 import { ActionChip, DemoChip } from "@/components/ui/chips";
 import { Card, CardTitle, EmptyState, KpiCard, timeAgo } from "@/components/ui/cards";
-import { getCompanyProfile, getLastRun, getOverview, listChanges, listIncomplete, listQuiet, listTodaysActions } from "@/lib/db/readDb";
+import { getCompanyProfile, getLastRun, getOverview, listAllCards, listChanges, listIncomplete, listQuiet, listTodaysActions } from "@/lib/db/readDb";
 import { getConfig } from "@/lib/config";
 import { currentIsFounder } from "@/lib/founder/server";
 
@@ -19,10 +20,10 @@ const greeting = () => {
 export default async function CommandCentre() {
   let d;
   try {
-    const [overview, actions, changes, quiet, incomplete, run, company] = await Promise.all([
-      getOverview(), listTodaysActions(12), listChanges(5), listQuiet(50), listIncomplete(50), getLastRun(), getCompanyProfile(),
+    const [overview, actions, changes, quiet, incomplete, run, company, allCards] = await Promise.all([
+      getOverview(), listTodaysActions(12), listChanges(5), listQuiet(50), listIncomplete(50), getLastRun(), getCompanyProfile(), listAllCards(),
     ]);
-    d = { overview, actions, changes, quiet, incomplete, run, company };
+    d = { overview, actions, changes, quiet, incomplete, run, company, allCards };
   } catch (e) {
     console.error("[command centre]", (e as Error).message);
     return (
@@ -32,7 +33,7 @@ export default async function CommandCentre() {
       </div>
     );
   }
-  const { overview: o, actions, changes, quiet, incomplete, run, company } = d;
+  const { overview: o, actions, changes, quiet, incomplete, run, company, allCards } = d;
   const founder = await currentIsFounder().catch(() => false);
   const quietCopy = getConfig().scoring.language.quiet;
   const worthContacting = o.reach_out_now + o.follow_up_now;
@@ -135,6 +136,10 @@ export default async function CommandCentre() {
           </Card>
         </div>
       </div>
+      <details className="rounded-[20px] border border-line bg-surface p-5">
+        <summary className="cursor-pointer font-display text-xl font-semibold text-ink-900">Opportunity matrix <span className="text-sm font-normal text-ink-500">fit vs score, click a dot</span></summary>
+        <div className="mt-3"><OpportunityMatrix cards={allCards} /></div>
+      </details>
     </div>
   );
 }

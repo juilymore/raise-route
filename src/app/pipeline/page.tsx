@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { DemoChip } from "@/components/ui/chips";
 import { PipelineBrowser, type PipelineRow } from "@/components/PipelineBrowser";
 import { pageTitle } from "@/config/brand";
-import { getCompanyProfile, listAllCards, listVcs } from "@/lib/db/readDb";
+import { getCompanyProfile, getRun, listAllCards, listRuns, listSnapshotRows, listVcs } from "@/lib/db/readDb";
 
 export const metadata: Metadata = { title: pageTitle("Pipeline") };
 export const dynamic = "force-dynamic";
@@ -11,11 +11,16 @@ export default async function PipelinePage({ searchParams }: { searchParams: Pro
   const sp = await searchParams;
   let rows: PipelineRow[];
   let isSample = false;
+  let runs: Awaited<ReturnType<typeof listRuns>> = [];
+  let asOf: Awaited<ReturnType<typeof getRun>> = null;
   try {
-    const [vcs, cards, company] = await Promise.all([listVcs(), listAllCards(), getCompanyProfile()]);
+    const wanted = sp.asof && /^[0-9a-f-]{36}$/i.test(sp.asof) ? sp.asof : null;
+    const [vcs, cards, company, runList] = await Promise.all([listVcs(), listAllCards(), getCompanyProfile(), listRuns(15)]);
     isSample = company.isSample;
+    runs = runList.filter((r) => r.status !== "RUNNING");
+    asOf = wanted ? await getRun(wanted) : null;
     const bySlug = new Map(cards.map((c) => [c.slug, c]));
-    rows = vcs.map((v) => {
+    rows = asOf ? await listSnapshotRows(asOf.id) : vcs.map((v) => {
       const c = bySlug.get(v.slug);
       return {
         slug: v.slug, firm: v.firm, name: v.name, action: c?.action ?? "NOT_ASSESSED", holdReason: c?.holdReason ?? null, score: c?.score ?? null,
@@ -41,7 +46,17 @@ export default async function PipelinePage({ searchParams }: { searchParams: Pro
           {isSample && <DemoChip>Sample company</DemoChip>}
         </p>
       </div>
-      <PipelineBrowser rows={rows} initial={{ action: sp.action, status: sp.status, attention: sp.attention === "1" }} />
+      <form method="get" className="flex flex-wrap items-center gap-2 text-sm text-ink-700">
+        <label className="inline-flex items-center gap-2">View as of
+          <select name="asof" defaultValue={asOf?.id ?? ""} className="min-h-[44px] rounded-xl border border-line bg-white px-3 text-sm">
+            <option value="">Now (latest)</option>
+            {runs.map((r) => <option key={r.id} value={r.id}>{r.run_key} · {r.started_at?.slice(0, 10)}</option>)}
+          </select>
+        </label>
+        <button type="submit" className="min-h-[44px] rounded-xl border border-line bg-white px-4 font-semibold hover:border-brand">Show</button>
+      </form>
+      {asOf && <p className="rounded-xl bg-blue-50 px-4 py-2 text-sm text-blue-900" role="status">Snapshot as of run <strong>{asOf.run_key}</strong> ({asOf.started_at?.slice(0, 16).replace("T", " ")} UTC). Actions and scores are what that run decided; contact status shown is today&apos;s. <a className="font-semibold underline" href="/pipeline">Back to now</a></p>}
+      <PipelineBrowser key={asOf?.id ?? "now"} rows={rows} initial={{ action: sp.action, status: sp.status, attention: sp.attention === "1" }} />
     </div>
   );
 }

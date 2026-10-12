@@ -318,3 +318,21 @@ export async function getDigest(id: string) {
   );
   return { digest: toDigest(d), html: String(d.html), text: String(d.text_body), items: items.map((i) => ({ section: String(i.section), rank: Number(i.rank), firm: String(i.firm), slug: String(i.slug) })) };
 }
+
+/** Time travel: the pipeline exactly as a past run assessed it (from the immutable recommendation snapshots). */
+export async function listSnapshotRows(runId: string) {
+  const rows = await query(
+    `select v.slug, v.firm, v.name, v.hq_region, v.contact_status, v.last_contact_date, r.action, r.hold_reason, r.follow_up_score, r.assessment_status,
+            s.title as signal_title, s.event_date as signal_date
+       from public.recommendations r
+       join public.vc_pipeline v on v.id = r.vc_id
+       left join lateral (select x.title, x.event_date from public.signals x where x.id = any(r.signal_ids) order by x.event_date desc limit 1) s on true
+      where r.run_id = $1 order by v.firm`,
+    [runId],
+  );
+  return rows.map((x) => ({
+    slug: String(x.slug), firm: String(x.firm), name: String(x.name), action: String(x.action), holdReason: (x.hold_reason as string | null) ?? null,
+    score: x.follow_up_score === null ? null : Number(x.follow_up_score), lastSignalDate: D(x.signal_date), whyNow: (x.signal_title as string | null) ?? null,
+    contactStatus: String(x.contact_status), lastContactDate: D(x.last_contact_date), region: (x.hq_region as string | null) ?? null, assessmentStatus: String(x.assessment_status),
+  }));
+}
