@@ -101,7 +101,11 @@ export default async function CommandCentre() {
                       <Link href={`/vc/${c.slug}`} className="min-w-0 truncate text-sm font-medium text-ink-900 hover:text-brand">{c.firm}</Link>
                       <span className="flex shrink-0 items-center gap-1.5 text-xs tabular-nums text-ink-500">
                         {delta > 0 ? <ArrowUp size={14} className="text-emerald-600" aria-label="up" /> : delta < 0 ? <ArrowDown size={14} className="text-red-600" aria-label="down" /> : <ArrowRight size={14} aria-hidden="true" />}
-                        {c.scoreBefore ?? "–"} → {c.scoreNow ?? "–"}
+                        {c.scoreBefore === null && c.scoreNow === null ? (
+                          <>{c.actionBefore ? <ActionChip action={c.actionBefore} /> : null}<span aria-hidden="true">→</span></>
+                        ) : (
+                          <>{c.scoreBefore ?? "no score"} → {c.scoreNow ?? "no score"}</>
+                        )}
                         <ActionChip action={c.actionNow} />
                       </span>
                     </li>

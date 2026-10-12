@@ -169,3 +169,20 @@ export function reconcileEventDate(
   if (diff < -14) return { ok: true, eventDate: publishedDate, capped: true };
   return { ok: true, eventDate: modelEventDate, capped: false };
 }
+
+const MONTH_NAMES = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+
+/**
+ * Does the text state this yyyy-mm-dd date (ISO, "5 October", "October 5", "5th Oct", ...)?
+ * Used (a) to check a model-supplied "explicit in text" date really appears in the page, and (b) to check outreach drafts cite the signal date.
+ */
+export function mentionsDate(text: string, iso: string): boolean {
+  const [, m, d] = iso.split("-").map(Number) as [number, number, number];
+  const t = text.toLowerCase();
+  const mon = MONTH_NAMES[m - 1]!;
+  const short = mon.slice(0, 3);
+  const suffix = d % 100 >= 11 && d % 100 <= 13 ? "th" : ({ 1: "st", 2: "nd", 3: "rd" } as Record<number, string>)[d % 10] ?? "th";
+  const forms = [iso];
+  for (const name of [mon, short]) forms.push(`${d} ${name}`, `${name} ${d}`, `${d}${suffix} ${name}`, `${name} ${d}${suffix}`);
+  return forms.some((f) => new RegExp(`(?<![a-z0-9])${f.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![0-9])`).test(t));
+}

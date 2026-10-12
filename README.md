@@ -77,7 +77,11 @@ Vercel Hobby, Neon free tier and Google AI Studio. Roughly 7 Gemini calls for 5 
 * **Sample:** the company profile ("FreightLoop") is a **sample** (`data/company_brief.md`), labelled until the founder saves their own.
 * **Unverified hints:** investor thesis/stage/sector tags in the seed are starter hints, not verified facts.
 
+## Scheduling note
+Vercel's free plan runs a cron job once within the scheduled hour (Mon and Thu, 03:00-03:59 UTC = about 08:30-09:30 IST). The route is `GET /api/cron/run` with `Authorization: Bearer $CRON_SECRET`, so it can also be triggered by hand to demonstrate it. A run takes roughly 15 minutes because it is split into time-boxed chunks that continue themselves.
+
 ## Known limitations
+* Public pages are read-only for anyone, including the synthetic demo relationship data and notes (labelled "Demo data"). Only the founder can edit or run anything.
 * No LinkedIn/X (terms of service) and no paid data vendors.
 * Many publishers block bots or paywall pages; those candidates are rejected as `FETCH_FAILED` and the investor may show **Incomplete** instead of Quiet. That is deliberate.
 * Google News links are decoded through an undocumented Google endpoint that can change; failures are reported, never treated as "nothing found".

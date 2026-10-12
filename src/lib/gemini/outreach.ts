@@ -56,20 +56,9 @@ ${sigs}
 Write the email now. Return {"subject": string, "body": string, "hook_signal_id": string, "placeholders": string[]}.`;
 }
 
-const MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+import { mentionsDate } from "@/lib/engine/dates";
 
-/** Does the text mention this yyyy-mm-dd date in ISO, "5 October" or "October 5" form? */
-export function mentionsDate(text: string, iso: string): boolean {
-  const [y, m, d] = iso.split("-").map(Number) as [number, number, number];
-  const t = text.toLowerCase();
-  const mon = MONTHS[m - 1]!;
-  const short = mon.slice(0, 3);
-  const suffix = d % 100 >= 11 && d % 100 <= 13 ? "th" : ({ 1: "st", 2: "nd", 3: "rd" } as Record<number, string>)[d % 10] ?? "th";
-  const forms = [iso];
-  for (const name of [mon, short]) forms.push(`${d} ${name}`, `${name} ${d}`, `${d}${suffix} ${name}`, `${name} ${d}${suffix}`);
-  void y;
-  return forms.some((f) => new RegExp(`(?<![a-z0-9])${f.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![0-9])`).test(t));
-}
+export { mentionsDate };
 
 export function wordCount(s: string): number {
   return s.trim().split(/\s+/).filter(Boolean).length;

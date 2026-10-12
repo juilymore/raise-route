@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import type { ScoringConfig, SourcesConfig, TaxonomyConfig } from "@/lib/config";
 import { actionReason, regionFromGeography, signalSummary } from "@/lib/engine/explain";
-import { checkWindow, isResurfaced, reconcileEventDate, resolveDate, type ResolvedDate } from "@/lib/engine/dates";
+import { checkWindow, isResurfaced, mentionsDate, reconcileEventDate, resolveDate, type ResolvedDate } from "@/lib/engine/dates";
 import { clusterKey, independentSourceCount, isIndependentSource, isSameEvent, registrableDomain } from "@/lib/engine/dedupe";
 import { attributionLevel, entityMatch, type AliasIndex } from "@/lib/engine/entities";
 import { decide } from "@/lib/engine/actions";
@@ -259,7 +259,8 @@ export async function processVc(deps: TaskDeps, vc: VcInput): Promise<TaskOutcom
           basis = doc.resolved.basis === "explicit_in_text" ? "explicit_in_text" : doc.resolved.basis;
         } else if (e.event_date && e.event_date_basis === "explicit_in_text") {
           const m = resolveDate({ modelExplicitDate: e.event_date });
-          if (!m) { fail("DATE_UNVERIFIED"); continue; }
+          // ladder rung 6 is only trusted if the page text itself states that date (the model alone cannot supply a date)
+          if (!m || !mentionsDate(doc.text, m.date)) { fail("DATE_UNVERIFIED"); continue; }
           eventDate = m.date;
           basis = "explicit_in_text";
         } else { fail("DATE_UNVERIFIED"); continue; }
