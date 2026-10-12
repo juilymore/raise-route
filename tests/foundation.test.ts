@@ -3,7 +3,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { BRAND, pageTitle } from "@/config/brand";
-import { loadConfigFile, loadScoring, loadSources, loadTaxonomy, scoringSchema } from "@/lib/config";
+import { loadScoring, loadSources, loadTaxonomy, scoringSchema } from "@/lib/config";
+import { loadConfigFile } from "@/lib/config/disk";
 import { envPresence, parseEnv } from "@/lib/env";
 import { assertIdent, buildInsert } from "@/lib/db/sql";
 

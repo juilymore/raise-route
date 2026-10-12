@@ -1,18 +1,13 @@
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import type { ZodType } from "zod";
+import scoringJson from "../../../config/scoring.v1.json";
+import sourcesJson from "../../../config/sources.json";
+import taxonomyJson from "../../../config/taxonomy.json";
 import { scoringSchema, sourcesSchema, taxonomySchema } from "./schemas";
 
 export * from "./schemas";
 
-/** Read + validate one config file. Throws with the file name and failing paths so a bad edit fails fast. */
-export function loadConfigFile<T>(file: string, schema: ZodType<T>, dir = join(process.cwd(), "config")): T {
-  let raw: unknown;
-  try {
-    raw = JSON.parse(readFileSync(join(dir, file), "utf8"));
-  } catch (e) {
-    throw new Error(`config/${file}: cannot read or parse JSON (${(e as Error).message})`);
-  }
+/** Validate an already-parsed JSON value (used for the bundled defaults so Vercel does not need filesystem access at runtime). */
+function validate<T>(file: string, raw: unknown, schema: ZodType<T>): T {
   const res = schema.safeParse(raw);
   if (!res.success) {
     const issues = res.error.issues.map((i) => `${i.path.join(".") || "(root)"}: ${i.message}`).join("; ");
@@ -21,9 +16,10 @@ export function loadConfigFile<T>(file: string, schema: ZodType<T>, dir = join(p
   return res.data;
 }
 
-export const loadScoring = (dir?: string) => loadConfigFile("scoring.v1.json", scoringSchema, dir);
-export const loadTaxonomy = (dir?: string) => loadConfigFile("taxonomy.json", taxonomySchema, dir);
-export const loadSources = (dir?: string) => loadConfigFile("sources.json", sourcesSchema, dir);
+// Config is imported statically (bundled into the build): no filesystem access at runtime.
+export const loadScoring = () => validate("scoring.v1.json", scoringJson, scoringSchema);
+export const loadTaxonomy = () => validate("taxonomy.json", taxonomyJson, taxonomySchema);
+export const loadSources = () => validate("sources.json", sourcesJson, sourcesSchema);
 
 let cache: { scoring: ReturnType<typeof loadScoring>; taxonomy: ReturnType<typeof loadTaxonomy>; sources: ReturnType<typeof loadSources> } | undefined;
 export function getConfig() {

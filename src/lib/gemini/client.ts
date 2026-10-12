@@ -84,7 +84,8 @@ export function createSdkTransport(apiKey: string): Transport {
       if (req.grounded) config.tools = [{ googleSearch: {} }];
       // Gemini 3.x: thinkingLevel (default is HIGH = slower/costlier). 2.5: a small thinkingBudget instead. Never both.
       if (req.thinking === "low") config.thinkingConfig = is3x(req.model) ? { thinkingLevel: ThinkingLevel.LOW } : { thinkingBudget: 256 };
-      if (req.signal) config.abortSignal = req.signal;
+      // A hung request must not stall a whole run: hard 90 s timeout per request unless the caller supplies its own signal.
+      config.abortSignal = req.signal ?? AbortSignal.timeout(90_000);
       // temperature is intentionally left at the default (1.0): lower values can loop or degrade Gemini 3.x output.
       const res = await ai.models.generateContent({ model: req.model, contents: req.contents, config });
       const gm = res.candidates?.[0]?.groundingMetadata;
