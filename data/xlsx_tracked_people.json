@@ -1,0 +1,62 @@
+{
+ "_note": "Derived from data/Vikram_VC_Seed_Data.xlsx sheet '50 Investor Candidates' (role titles there say 'verify current title'). Used ONLY to fill tracked_people for the 6 firms that exist in seed_vcs.csv. IAN Alpha Fund / IAN Group (5 rows) are not in the 50-firm list and are excluded.",
+ "people": {
+  "blume-ventures": [
+   "Arpit Agarwal",
+   "Joseph Sebastian",
+   "Sanjay Nath",
+   "Karthik Reddy",
+   "Ashish Fafadia",
+   "Yash Jain",
+   "Anagha Shivaprakash",
+   "Apurva Dixit"
+  ],
+  "3one4-capital": [
+   "Pranav Pai",
+   "Siddarth Pai",
+   "Anurag Ramdasan",
+   "Nruthya Madappa",
+   "Richard Pinto",
+   "Ashwini Thulsaram",
+   "Sonal Saldanha",
+   "Ayushi Garg"
+  ],
+  "peak-xv-partners": [
+   "Rajan Anandan",
+   "Shailendra Singh",
+   "Abhishek Mohan",
+   "GV Ravishankar",
+   "Mohit Bhatnagar",
+   "Mohit Abraham",
+   "Aadith Ramesh",
+   "Kaustubh Mundra",
+   "Pushpak Kedia",
+   "Navendu Sharma",
+   "Rishen Kapoor",
+   "Chinmaya Golecha"
+  ],
+  "accel": [
+   "Pratik Agarwal",
+   "Anagh Prasad",
+   "Shekhar Kirani",
+   "Mahendran Balachandran",
+   "Abhinav Chaturvedi",
+   "Barath Shankar Subramanian",
+   "Anand Daniel",
+   "Subrata Mitra",
+   "Prashanth Prakash",
+   "Amit Kumar"
+  ],
+  "dynamo-ventures": [
+   "Santosh Sankar",
+   "Jon Bradford",
+   "Ted Alling",
+   "Barry Large",
+   "Madelyn O’Farrell",
+   "Prince Ghosh"
+  ],
+  "schematic-ventures": [
+   "Julian Counihan"
+  ]
+ }
+}

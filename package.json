@@ -13,7 +13,10 @@
     "lint": "eslint .",
     "test": "vitest run",
     "verify": "npm run typecheck && npm run lint && npm test && node scripts/check-compliance.mjs",
-    "db:test": "node scripts/db-test.mjs"
+    "db:test": "node scripts/db-test.mjs",
+    "db:migrate": "node scripts/db-migrate.mjs --seed",
+    "db:seed": "node scripts/db-migrate.mjs --seed-only",
+    "db:app-role": "node scripts/db-setup-app-role.mjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.2.0",

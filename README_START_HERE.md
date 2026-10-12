@@ -42,7 +42,7 @@ You asked for: *final files for Claude Code, deep research, "full marks"*. This 
 6. *(optional)* Tavily key.
 Copy `.env.example` → `.env.local` and fill it.
 
-**Step 2 — database (15 min, YOU).** Neon → SQL editor → run, in order: `0000_neon_roles.sql`, `0001_schema.sql`, `0002_guards.sql`, `seed.sql`. (Optional: `psql "$DATABASE_URL" -f db/tests/guard_test.sql` → expect `ALL GUARD TESTS PASSED`.)
+**Step 2 — database (YOU: paste the Neon strings in .env.local; then run).** `npm run db:migrate` → `npm run db:app-role` → `npm run db:test` (expect ALL GUARD TESTS PASSED). No psql needed.
 
 **Step 3 — build M1 (Claude Code).** In the repo: `claude` → paste **P00** (plan mode) → **P01** → **P02** → **P03** → **P04** → **P05** → **P06** → **P07** → **P08** → **P09**. `/clear` between phases, commit after each, read each report before continuing. After P06 and P09 run `/exam-audit`.
 → **After P09 you have a submittable project.**
