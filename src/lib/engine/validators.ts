@@ -84,11 +84,32 @@ export function normalizeQuote(s: string): string {
     .toLowerCase();
 }
 
+/** An excerpt shorter than this is too easy to match by accident ("a" is inside "banana"). */
+export const MIN_EXCERPT_CHARS = 20;
+
+/** Substring match that must start and end on a non-alphanumeric boundary (so "Foo" does not verify inside "Foobar"). */
+export function containsWholePhrase(haystack: string, needle: string): boolean {
+  if (!needle) return false;
+  let from = 0;
+  for (;;) {
+    const i = haystack.indexOf(needle, from);
+    if (i < 0) return false;
+    const before = i === 0 ? "" : haystack[i - 1]!;
+    const after = haystack[i + needle.length] ?? "";
+    const isAlnum = (c: string) => /[a-z0-9]/i.test(c);
+    const startOk = !needle[0] || !isAlnum(needle[0]) || !isAlnum(before);
+    const endOk = !needle[needle.length - 1] || !isAlnum(needle[needle.length - 1]!) || !isAlnum(after);
+    if (startOk && endOk) return true;
+    from = i + 1;
+  }
+}
+
 /** V9 - evidence_excerpt is at most 300 chars and appears (whitespace/case/quote-normalised) in the fetched text. */
 export function v9Quote(excerpt: string, fetchedText: string) {
   if (excerpt.trim().length === 0) return fail("QUOTE_NOT_FOUND", "empty excerpt");
   if (excerpt.length > 300) return fail("QUOTE_NOT_FOUND", `excerpt is ${excerpt.length} chars (max 300)`);
-  return normalizeQuote(fetchedText).includes(normalizeQuote(excerpt)) ? pass() : fail("QUOTE_NOT_FOUND", "excerpt not found in the fetched text");
+  if (excerpt.trim().length < MIN_EXCERPT_CHARS) return fail("QUOTE_NOT_FOUND", `excerpt shorter than ${MIN_EXCERPT_CHARS} chars cannot prove anything`);
+  return containsWholePhrase(normalizeQuote(fetchedText), normalizeQuote(excerpt)) ? pass() : fail("QUOTE_NOT_FOUND", "excerpt not found in the fetched text");
 }
 
 /** V10 - relevance tier is not "none" after the keyword cross-check, which may only downgrade. */
@@ -133,7 +154,7 @@ const INVESTMENT_LIKE = new Set(["investment", "portfolio_activity"]);
 export function v14Subject(signalType: string, subjectEntity: string | null, text: string) {
   if (!INVESTMENT_LIKE.has(signalType)) return pass();
   if (!subjectEntity || !subjectEntity.trim()) return fail("NOT_ATTRIBUTABLE", "investment signal without a subject entity");
-  return normalizeQuote(text).includes(normalizeQuote(subjectEntity)) ? pass() : fail("NOT_ATTRIBUTABLE", `subject "${subjectEntity}" not found in the text`);
+  return containsWholePhrase(normalizeQuote(text), normalizeQuote(subjectEntity)) ? pass() : fail("NOT_ATTRIBUTABLE", `subject "${subjectEntity}" not found in the text`);
 }
 
 const EN_STOP = new Set(["the", "and", "of", "to", "in", "for", "is", "on", "with", "that", "as", "by", "from", "at", "an", "it", "its", "has", "have", "was", "are", "will", "this", "their", "which", "also", "said"]);

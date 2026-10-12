@@ -71,10 +71,12 @@ export function corroboration(qualifying: ScoringSignal[], top: ScoringSignal, c
 }
 
 /** Unknown stays unknown: no stage/sector/geography data yields the configured neutral points, never an invented fact. */
+const own = <T>(o: Record<string, T>, k: string): T | undefined => (Object.hasOwn(o, k) ? o[k] : undefined);
+
 export function fundFit(fund: FundProfile, companyGeo: string | null, cfg: ScoringConfig): FundFit {
   const F = cfg.fund_fit;
-  const stage = F.stage_points[fund.stage_focus ?? "UNKNOWN"] ?? need(F.stage_points.UNKNOWN, "fund_fit.stage_points.UNKNOWN");
-  const known = (fund.sector_tags ?? []).map((t) => F.sector_points[t]).filter((p): p is number => p !== undefined);
+  const stage = own(F.stage_points, fund.stage_focus ?? "UNKNOWN") ?? need(F.stage_points.UNKNOWN, "fund_fit.stage_points.UNKNOWN");
+  const known = (fund.sector_tags ?? []).map((t) => own(F.sector_points, t)).filter((p): p is number => p !== undefined);
   const sector = known.length ? Math.max(...known) : F.sector_unknown_points;
   const G = F.geo_points;
   let geo: number;

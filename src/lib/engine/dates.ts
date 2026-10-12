@@ -30,6 +30,9 @@ export function parseDate(input: string | null | undefined): string | null {
   const s = input.trim();
   let m = s.match(/^(\d{4})-(\d{2})-(\d{2})(?:[T\s]|$)/);
   if (m) {
+    // An impossible time of day (e.g. T25:99) means the whole value is not trustworthy.
+    const timePart = s.slice(10).replace(/^[T\s]/, "");
+    if (timePart && !/^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d(\.\d+)?)?\s*(Z|[+-]\d{2}:?\d{2})?$/i.test(timePart)) return null;
     // Take the calendar date as written (publisher's date). Timezone shifts of hours must not change the day silently.
     return valid(+m[1]!, +m[2]!, +m[3]!);
   }
@@ -97,7 +100,15 @@ export function extractPageDates(html: string): PageDates {
     parseDate($('[itemprop="datePublished"]').first().attr("content") ?? $('[itemprop="datePublished"]').first().attr("datetime"));
   const metaModified =
     meta('meta[property="article:modified_time"]') ?? meta('meta[property="og:updated_time"]') ?? meta('meta[itemprop="dateModified"]');
-  const timeTag = parseDate($("article time[datetime], header time[datetime], main time[datetime]").first().attr("datetime"));
+  // Rung 4 must be a PUBLISHED time. Skip <time> elements that say they are modified/updated (itemprop, class, or leading text).
+  const publishedTimes = $("article time[datetime], header time[datetime], main time[datetime]").filter((_, el) => {
+    const e = $(el);
+    const marker = `${e.attr("itemprop") ?? ""} ${e.attr("class") ?? ""} ${e.attr("data-type") ?? ""}`;
+    const lead = (e.parent().text() ?? "").trim().slice(0, 40);
+    const saysUpdated = /^(last\s+)?(updated|modified|edited)\b/i;
+    return !/modif|updat/i.test(marker) && !saysUpdated.test(e.text().trim()) && !saysUpdated.test(lead);
+  });
+  const timeTag = parseDate(publishedTimes.first().attr("datetime"));
   return { jsonLdPublished, jsonLdModified, metaPublished, metaModified, timeTag };
 }
 

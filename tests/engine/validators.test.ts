@@ -149,3 +149,17 @@ describe("dedupe and independence (V13)", () => {
     expect(v13Duplicate(unrelated, accepted, syndicators).ok).toBe(true);
   });
 });
+
+describe("audit hardening (P03 audit findings)", () => {
+  it("B5: a tiny excerpt cannot verify (\"a\" is inside \"banana\")", () => {
+    expect(v9Quote("a", "banana banana banana")).toMatchObject({ ok: false, code: "QUOTE_NOT_FOUND" });
+  });
+  it("B5: an excerpt must match on word boundaries", () => {
+    expect(v9Quote("led the round in logistics", "Fund X misled the round in logistics again and again").ok).toBe(false);
+    expect(v9Quote("led the round in logistics", "Fund X led the round in logistics, said the CEO.").ok).toBe(true);
+  });
+  it("B7: subject entity must match a whole word (Foo is not Foobar)", () => {
+    expect(v14Subject("investment", "Foo", "The fund invested in Foobar Inc last week").ok).toBe(false);
+    expect(v14Subject("investment", "Foo", "The fund invested in Foo last week").ok).toBe(true);
+  });
+});

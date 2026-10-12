@@ -68,3 +68,11 @@ describe("SSRF guard (pure parts)", () => {
     expect(parseIPv6("1::2::3")).toBeNull();
   });
 });
+
+describe("audit hardening: extra reserved IPv6/IPv4 ranges", () => {
+  it("blocks IPv4-translated, Teredo, local-use NAT64, discard and 6to4 relay", () => {
+    for (const h of ["http://[::ffff:0:127.0.0.1]/", "http://[2001:0:7f00:1::]/", "http://[64:ff9b:1::1]/", "http://[100::1]/", "http://192.88.99.1/"]) {
+      expect(blocked(h), h).toBe(true);
+    }
+  });
+});

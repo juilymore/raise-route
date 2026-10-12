@@ -85,3 +85,18 @@ describe("date coherence (V4)", () => {
     expect(reconcileEventDate(null, "2026-10-05")).toEqual({ ok: true, eventDate: "2026-10-05", capped: false });
   });
 });
+
+describe("audit hardening: dates", () => {
+  it("B3: a <time> element that says it is modified/updated is never the event date", () => {
+    const a = extractPageDates(`<article><time itemprop="dateModified" datetime="2026-10-10">x</time></article>`);
+    expect(resolveDate({ page: a })).toBeNull();
+    const b = extractPageDates(`<article><p>Updated <time datetime="2026-10-10">Oct 10</time></p></article>`);
+    expect(resolveDate({ page: b })).toBeNull();
+    const c = extractPageDates(`<article><time class="entry-updated" datetime="2026-10-10">x</time><time datetime="2026-10-01">pub</time></article>`);
+    expect(resolveDate({ page: c })).toMatchObject({ date: "2026-10-01", rung: 4 });
+  });
+  it("B4: an invalid time portion invalidates the date", () => {
+    expect(parseDate("2026-10-12T25:99")).toBeNull();
+    expect(parseDate("2026-10-12T23:59:59Z")).toBe("2026-10-12");
+  });
+});

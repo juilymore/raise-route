@@ -46,6 +46,7 @@ const BLOCKED_V4: Array<[number, number]> = [
   [v4(192, 0, 0, 0), 24],
   [v4(192, 0, 2, 0), 24],
   [v4(192, 168, 0, 0), 16],
+  [v4(192, 88, 99, 0), 24], // deprecated 6to4 relay anycast
   [v4(198, 18, 0, 0), 15],
   [v4(198, 51, 100, 0), 24],
   [v4(203, 0, 113, 0), 24],
@@ -93,7 +94,11 @@ export function isBlockedIPv6(g: number[]): boolean {
   const allZeroTo = (n: number) => g.slice(0, n).every((x) => x === 0);
   if (allZeroTo(7) && (h === 0 || h === 1)) return true; // :: and ::1
   if (allZeroTo(5) && f === 0xffff) return isBlockedIPv4(embeddedV4); // ::ffff:a.b.c.d (IPv4-mapped)
+  if (allZeroTo(4) && e === 0xffff && f === 0) return isBlockedIPv4(embeddedV4); // ::ffff:0:a.b.c.d (IPv4-translated)
   if (allZeroTo(6)) return true; // ::a.b.c.d deprecated IPv4-compatible
+  if (a === 0x2001 && b === 0) return true; // Teredo 2001::/32
+  if (a === 0x64 && b === 0xff9b && c === 1) return true; // local-use NAT64 64:ff9b:1::/48
+  if (a === 0x100 && b === 0 && c === 0 && d === 0) return true; // discard-only 100::/64
   if (a === 0x64 && b === 0xff9b && c === 0 && d === 0 && e === 0 && f === 0) return isBlockedIPv4(embeddedV4); // NAT64
   if (a === 0x2002) return isBlockedIPv4(b * 65536 + c); // 6to4 embeds IPv4
   if ((a & 0xfe00) === 0xfc00) return true; // fc00::/7 unique local
