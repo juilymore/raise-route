@@ -3,7 +3,9 @@ import { Radar } from "lucide-react";
 import { Wordmark } from "@/components/brand/Logo";
 import { BottomTabs, IconRail, PillNav } from "@/components/NavLinks";
 import { timeAgo } from "@/components/ui/cards";
+import { FounderMenu } from "@/components/founder/FounderMenu";
 import { getLastRun, type RunSummary } from "@/lib/db/readDb";
+import { currentIsFounder } from "@/lib/founder/server";
 
 /** Honest status of the Integrity Guard receipt for the last run. */
 export function IntegrityBadge({ run }: { run: RunSummary | null }) {
@@ -21,6 +23,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
   } catch {
     run = null; // the page itself shows the database error; the shell must not crash
   }
+  const founder = await currentIsFounder().catch(() => false);
   return (
     <div className="min-h-screen p-2 pb-20 sm:p-4 md:pb-4">
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-white focus:px-3 focus:py-2">Skip to content</a>
@@ -34,6 +37,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
               {run ? `Last run ${timeAgo(run.completed_at ?? run.started_at)} · ${run.status === "COMPLETED" ? "completed" : run.status.toLowerCase().replaceAll("_", " ")} · ${run.trigger}` : "No run yet"}
             </Link>
             <IntegrityBadge run={run} />
+            <FounderMenu founder={founder} />
           </div>
         </header>
         <div className="flex">

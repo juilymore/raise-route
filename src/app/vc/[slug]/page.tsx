@@ -5,7 +5,9 @@ import { notFound } from "next/navigation";
 import { ActionChip, DemoChip, SourceChip, TagAI, TagYou } from "@/components/ui/chips";
 import { Card, CardTitle, EmptyState, Stat } from "@/components/ui/cards";
 import { ScoreRing } from "@/components/ui/ScoreRing";
+import { RelationshipEditor } from "@/components/founder/RelationshipEditor";
 import { StageTracker } from "@/components/StageTracker";
+import { currentIsFounder } from "@/lib/founder/server";
 import { pageTitle } from "@/config/brand";
 import { getConfig } from "@/lib/config";
 import { daysBetween } from "@/lib/engine/scoring";
@@ -48,6 +50,7 @@ export default async function VcPage({ params }: { params: Promise<{ slug: strin
   }
   if (!data) notFound();
   const { vc, signals, history, taskStats } = data;
+  const founder = await currentIsFounder().catch(() => false);
   const cfg = getConfig().scoring;
   const today = new Date().toISOString().slice(0, 10);
   const top = signals.find((s) => s.event_date === vc.last_signal_date) ?? signals[0];
@@ -114,6 +117,7 @@ export default async function VcPage({ params }: { params: Promise<{ slug: strin
             {vc.personal_notes ?? "No notes."}
           </div>
           <p className="mt-3 text-xs text-ink-500">The system never edits this panel. Editing is for the founder only.</p>
+          {founder && <RelationshipEditor vcId={vc.id} status={vc.contact_status} lastContact={vc.last_contact_date} reconnectAfter={vc.reconnect_after} notes={vc.personal_notes} />}
         </Card>
       </div>
 

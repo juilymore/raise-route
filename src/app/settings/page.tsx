@@ -3,12 +3,14 @@ import { Card, CardTitle, Stat } from "@/components/ui/cards";
 import { DemoChip, TagYou } from "@/components/ui/chips";
 import { pageTitle } from "@/config/brand";
 import { getConfig } from "@/lib/config";
+import { CompanyEditor } from "@/components/founder/CompanyEditor";
+import { currentIsFounder } from "@/lib/founder/server";
 import { getCompanyProfile } from "@/lib/db/readDb";
 
 export const metadata: Metadata = { title: pageTitle("Settings") };
 export const dynamic = "force-dynamic";
 
-// P07: read-only. Founder editing of the company profile arrives with founder login in P08.
+// Visitors see this read-only. A logged-in founder gets the editor (PATCH /api/founder/company).
 export default async function SettingsPage() {
   let c;
   try {
@@ -18,6 +20,7 @@ export default async function SettingsPage() {
     return <div className="mx-auto max-w-xl py-16 text-center text-ink-500">The database could not be reached. Please try again in a moment.</div>;
   }
   const { scoring } = getConfig();
+  const founder = await currentIsFounder().catch(() => false);
   const p = c.profile;
   return (
     <div className="mx-auto max-w-[900px] space-y-6">
@@ -32,6 +35,7 @@ export default async function SettingsPage() {
           <Stat label="Relevance keywords" value={p.relevance_keywords.join(", ")} />
         </dl>
         <p className="mt-4 text-sm text-ink-700">{p.product_description}</p>
+        {founder ? <CompanyEditor company_name={p.company_name} product_description={p.product_description} sector={p.sector} stage={p.stage} geography={p.geography} icp={(p as { icp?: string | null }).icp ?? null} relevance_keywords={p.relevance_keywords} /> : <p className="mt-3 text-xs text-ink-500">Log in as founder (top right) to edit.</p>}
       </Card>
       <Card>
         <CardTitle>Scoring</CardTitle>
