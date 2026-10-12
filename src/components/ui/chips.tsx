@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { AlertTriangle, CircleSlash, Eye, PauseCircle, Reply, Send, type LucideIcon } from "lucide-react";
 
 export const ACTION_STYLE: Record<string, { label: string; bg: string; fg: string; dot: string }> = {
   REACH_OUT_NOW: { label: "Reach out now", bg: "#DCFCE7", fg: "#166534", dot: "#22C55E" },
@@ -8,6 +9,21 @@ export const ACTION_STYLE: Record<string, { label: string; bg: string; fg: strin
   DONT_PRIORITIZE: { label: "Don't prioritize", bg: "#F3F4F6", fg: "#6B7280", dot: "#D1D5DB" },
   ASSESSMENT_INCOMPLETE: { label: "Incomplete", bg: "#FFEDD5", fg: "#9A3412", dot: "#F97316" },
   NOT_ASSESSED: { label: "Not assessed yet", bg: "#F3F4F6", fg: "#6B7280", dot: "#D1D5DB" },
+};
+
+export const ACTION_ICON: Record<string, LucideIcon> = {
+  REACH_OUT_NOW: Send, FOLLOW_UP_NOW: Reply, MONITOR: Eye, HOLD: PauseCircle, DONT_PRIORITIZE: CircleSlash, ASSESSMENT_INCOMPLETE: AlertTriangle, NOT_ASSESSED: CircleSlash,
+};
+
+/** One plain sentence per action, shown as a tooltip and on cards, so the colour/label is never a mystery. */
+export const ACTION_HELP: Record<string, string> = {
+  REACH_OUT_NOW: "Strong, fresh and relevant. Send your first message now.",
+  FOLLOW_UP_NOW: "You already know them and they did something new. Follow up now.",
+  MONITOR: "Some activity, not strong enough yet. Keep an eye on them.",
+  HOLD: "Do not contact yet: you spoke recently, are waiting for a reply or set a reconnect date.",
+  DONT_PRIORITIZE: "Nothing relevant or recent. Spend your time elsewhere.",
+  ASSESSMENT_INCOMPLETE: "A source could not be checked, so we cannot say. Not the same as quiet.",
+  NOT_ASSESSED: "Not checked yet.",
 };
 
 export const HOLD_LABEL: Record<string, string> = {
@@ -20,9 +36,10 @@ export const HOLD_LABEL: Record<string, string> = {
 /** Colour never carries meaning alone: the label text is always shown. */
 export function ActionChip({ action, holdReason, className }: { action: string; holdReason?: string | null; className?: string }) {
   const s = ACTION_STYLE[action] ?? ACTION_STYLE.NOT_ASSESSED!;
+  const Icon = ACTION_ICON[action] ?? CircleSlash;
   return (
-    <span className={clsx("inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold", className)} style={{ background: s.bg, color: s.fg }}>
-      <span className="h-1.5 w-1.5 rounded-full" style={{ background: s.dot }} aria-hidden="true" />
+    <span title={ACTION_HELP[action]} className={clsx("inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold", className)} style={{ background: s.bg, color: s.fg }}>
+      <Icon size={13} aria-hidden="true" />
       {s.label}
       {action === "HOLD" && holdReason ? <span className="font-normal opacity-80">· {HOLD_LABEL[holdReason] ?? holdReason.toLowerCase()}</span> : null}
     </span>

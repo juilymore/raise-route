@@ -76,6 +76,12 @@ export async function listRuns(limit = 20): Promise<RunSummary[]> {
   return (await query("select * from public.pipeline_runs order by started_at desc limit $1", [limit])).map(toRun);
 }
 
+/** How many investors of a run have been checked so far (for the in-progress truck). */
+export async function getRunProgress(runId: string) {
+  const [r] = await query<{ total: number; done: number }>("select count(*)::int as total, count(*) filter (where status in ('DONE','PARTIAL','FAILED'))::int as done from public.run_tasks where run_id = $1", [runId]);
+  return { total: r?.total ?? 0, done: r?.done ?? 0 };
+}
+
 export async function getLastRun(): Promise<RunSummary | null> {
   const r = await listRuns(1);
   return r[0] ?? null;

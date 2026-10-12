@@ -49,6 +49,12 @@ export default function ComponentsMapPage() {
       </div>
 
       <Card>
+        <CardTitle aside={<a href="/components-map.png" download className="text-sm font-semibold text-brand hover:underline">Download PNG</a>}>Map by actor and stage</CardTitle>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/components-map.png" alt="Swimlane map: actors down the side, stages across (trigger, input, context, processing, AI, output), showing how Vikram, the scheduler, the source collector, Gemini Flash, the rules engine, the database and integrations connect" className="w-full rounded-xl border border-line" />
+      </Card>
+
+      <Card>
         <CardTitle>One run, end to end</CardTitle>
         <ol className="flex flex-wrap items-center gap-2 text-sm" aria-label="Pipeline flow">
           {FLOW.map((s, i) => (

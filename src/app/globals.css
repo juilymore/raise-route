@@ -38,3 +38,24 @@ body {
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+
+/* Motion (all of it is switched off by the reduced-motion rule above) */
+@keyframes rr-drive { 0% { transform: translateX(-12%); } 100% { transform: translateX(calc(var(--road, 260px) - 56px)); } }
+@keyframes rr-road { to { stroke-dashoffset: -28; } }
+@keyframes rr-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1.5px); } }
+@keyframes rr-spin { to { transform: rotate(360deg); } }
+@keyframes rr-fade-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes rr-pulse { 0% { box-shadow: 0 0 0 0 rgba(34,197,94,.55); } 70% { box-shadow: 0 0 0 10px rgba(34,197,94,0); } 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); } }
+@keyframes rr-pin { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes rr-cloud { from { transform: translateX(-30px); } to { transform: translateX(30px); } }
+
+.rr-truck { animation: rr-drive var(--dur, 4.5s) linear infinite; }
+.rr-truck-body { animation: rr-bounce .5s ease-in-out infinite; }
+.rr-road { animation: rr-road 1s linear infinite; }
+.rr-wheel { transform-box: fill-box; transform-origin: center; animation: rr-spin .6s linear infinite; }
+.rr-pin { animation: rr-pin 1.6s ease-in-out infinite; }
+.rr-fade { opacity: 0; animation: rr-fade-up .5s ease-out forwards; animation-delay: var(--d, 0ms); }
+.rr-live-dot { animation: rr-pulse 1.8s ease-out infinite; }
+.rr-lift { transition: transform .18s ease, box-shadow .18s ease; }
+.rr-lift:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(14,31,43,.12); }
+.rr-cloud { animation: rr-cloud 9s ease-in-out infinite alternate; }

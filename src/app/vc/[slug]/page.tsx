@@ -92,24 +92,41 @@ export default async function VcPage({ params }: { params: Promise<{ slug: strin
       )}
 
       <Card>
-        <CardTitle aside={<span className="text-xs text-ink-500">latest first</span>}>Full history</CardTitle>
-        {timeline.length === 0 ? <p className="text-sm text-ink-500">Nothing recorded yet.</p> : (
-          <ol className="space-y-3 border-l-2 border-dotted border-line pl-4">
-            {timeline.map((t) => (
-              <li key={t.key} className="relative">
-                <span className={`absolute -left-[22px] top-1.5 h-2.5 w-2.5 rounded-full ${t.by === "you" ? "bg-amber-500" : "bg-brand"}`} aria-hidden="true" />
-                <div className="flex flex-wrap items-center gap-2 text-sm">
-                  {t.by === "you" ? <TagYou /> : <TagAI>AI research</TagAI>}
-                  <span className="font-medium text-ink-900">{t.title}</span>
-                  <span className="text-xs tabular-nums text-ink-500">{t.at.replace("T", " ").slice(0, 16)}</span>
+        <CardTitle aside={<TagAI>AI-extracted · code-verified</TagAI>}>What made this investor stand out</CardTitle>
+        {signals.length === 0 ? (
+          <EmptyState
+            title={vc.assessment_status === "QUIET" ? "Quiet is not a failure" : vc.assessment_status === "NOT_ASSESSED" ? "Not assessed yet" : "No qualifying signal found"}
+            body={vc.assessment_status === "QUIET" ? "No qualifying signal found in the sources checked in the past 30 days." : vc.recommended_action === "ASSESSMENT_INCOMPLETE" ? "Assessment incomplete: one or more sources could not be checked. This is not evidence of inactivity." : undefined}
+          />
+        ) : (
+          <ul className="space-y-4">
+            {signals.map((s) => (
+              <li key={s.id} className="rounded-2xl border border-line p-4">
+                <div className="flex flex-wrap items-center gap-2 text-xs text-ink-500">
+                  <span className="rounded-md bg-bg px-1.5 py-0.5 font-semibold uppercase tracking-wide text-ink-700">{s.signal_type.replaceAll("_", " ")}</span>
+                  <span>event <strong className="tabular-nums text-ink-700">{s.event_date}</strong> ({s.event_date_basis.replaceAll("_", " ")})</span>
+                  {s.published_at && s.published_at !== s.event_date && <span>published <span className="tabular-nums">{s.published_at}</span></span>}
+                  <span>· {s.relevance_tier.replaceAll("_", " ")}</span>
+                  <span>· {s.attribution_level === "person" && s.attributed_person ? `attributed to ${s.attributed_person}` : "firm-level"}</span>
+                  {s.commitment === "rumor" && <span className="font-semibold text-orange-700">rumour</span>}
                 </div>
-                {t.body && <p className="mt-0.5 text-sm text-ink-700">{t.body}</p>}
-                {t.url && <a href={t.url} target="_blank" rel="noopener noreferrer" className="text-xs text-brand hover:underline">source</a>}
+                <h3 className="mt-1 font-display text-base font-semibold text-ink-900">{s.title}</h3>
+                <p className="mt-1 text-sm text-ink-700">{s.summary}</p>
+                <blockquote className="mt-2 border-l-4 border-brand/40 pl-3 text-sm italic text-ink-700">“{s.evidence_excerpt}”<span className="ml-2 not-italic">{s.excerpt_verified ? <span className="text-xs font-semibold text-emerald-700">✓ verified quote</span> : <span className="text-xs font-semibold text-red-700">unverified</span>}</span></blockquote>
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <SourceChip url={s.primary_source_url} domain={(() => { try { return new URL(s.primary_source_url).hostname.replace(/^www\./, ""); } catch { return null; } })()} date={s.event_date} verified={s.excerpt_verified} />
+                  {s.supporting_sources.map((x) => <SourceChip key={x.url} url={x.url} domain={x.domain ?? null} />)}
+                  <span className="text-xs text-ink-500">{s.independent_source_count} independent source{s.independent_source_count === 1 ? "" : "s"}</span>
+                </div>
               </li>
             ))}
-          </ol>
+          </ul>
+        )}
+        {channels && (
+          <p className="mt-4 text-xs text-ink-500">Sources checked: {Object.entries(channels).map(([k, v]) => `${CH[k] ?? k} ${v === "ok" ? "✓" : v === "fail" ? "✗ (failed)" : v === "none" ? "– (none exists)" : "– (skipped)"}`).join(" · ")}</p>
         )}
       </Card>
+
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
@@ -169,43 +186,27 @@ export default async function VcPage({ params }: { params: Promise<{ slug: strin
       )}
 
       <Card>
-        <CardTitle aside={<TagAI>AI-extracted · code-verified</TagAI>}>Evidence</CardTitle>
-        {signals.length === 0 ? (
-          <EmptyState
-            title={vc.assessment_status === "QUIET" ? "Quiet is not a failure" : vc.assessment_status === "NOT_ASSESSED" ? "Not assessed yet" : "No qualifying signal found"}
-            body={vc.assessment_status === "QUIET" ? "No qualifying signal found in the sources checked in the past 30 days." : vc.recommended_action === "ASSESSMENT_INCOMPLETE" ? "Assessment incomplete: one or more sources could not be checked. This is not evidence of inactivity." : undefined}
-          />
-        ) : (
-          <ul className="space-y-4">
-            {signals.map((s) => (
-              <li key={s.id} className="rounded-2xl border border-line p-4">
-                <div className="flex flex-wrap items-center gap-2 text-xs text-ink-500">
-                  <span className="rounded-md bg-bg px-1.5 py-0.5 font-semibold uppercase tracking-wide text-ink-700">{s.signal_type.replaceAll("_", " ")}</span>
-                  <span>event <strong className="tabular-nums text-ink-700">{s.event_date}</strong> ({s.event_date_basis.replaceAll("_", " ")})</span>
-                  {s.published_at && s.published_at !== s.event_date && <span>published <span className="tabular-nums">{s.published_at}</span></span>}
-                  <span>· {s.relevance_tier.replaceAll("_", " ")}</span>
-                  <span>· {s.attribution_level === "person" && s.attributed_person ? `attributed to ${s.attributed_person}` : "firm-level"}</span>
-                  {s.commitment === "rumor" && <span className="font-semibold text-orange-700">rumour</span>}
+        <CardTitle aside={<span className="text-xs text-ink-500">latest first</span>}>Full history</CardTitle>
+        {timeline.length === 0 ? <p className="text-sm text-ink-500">Nothing recorded yet.</p> : (
+          <ol className="space-y-3 border-l-2 border-dotted border-line pl-4">
+            {timeline.map((t) => (
+              <li key={t.key} className="relative">
+                <span className={`absolute -left-[22px] top-1.5 h-2.5 w-2.5 rounded-full ${t.by === "you" ? "bg-amber-500" : "bg-brand"}`} aria-hidden="true" />
+                <div className="flex flex-wrap items-center gap-2 text-sm">
+                  {t.by === "you" ? <TagYou /> : <TagAI>AI research</TagAI>}
+                  <span className="font-medium text-ink-900">{t.title}</span>
+                  <span className="text-xs tabular-nums text-ink-500">{t.at.replace("T", " ").slice(0, 16)}</span>
                 </div>
-                <h3 className="mt-1 font-display text-base font-semibold text-ink-900">{s.title}</h3>
-                <p className="mt-1 text-sm text-ink-700">{s.summary}</p>
-                <blockquote className="mt-2 border-l-4 border-brand/40 pl-3 text-sm italic text-ink-700">“{s.evidence_excerpt}”<span className="ml-2 not-italic">{s.excerpt_verified ? <span className="text-xs font-semibold text-emerald-700">✓ verified quote</span> : <span className="text-xs font-semibold text-red-700">unverified</span>}</span></blockquote>
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                  <SourceChip url={s.primary_source_url} domain={(() => { try { return new URL(s.primary_source_url).hostname.replace(/^www\./, ""); } catch { return null; } })()} date={s.event_date} verified={s.excerpt_verified} />
-                  {s.supporting_sources.map((x) => <SourceChip key={x.url} url={x.url} domain={x.domain ?? null} />)}
-                  <span className="text-xs text-ink-500">{s.independent_source_count} independent source{s.independent_source_count === 1 ? "" : "s"}</span>
-                </div>
+                {t.body && <p className="mt-0.5 text-sm text-ink-700">{t.body}</p>}
+                {t.url && <a href={t.url} target="_blank" rel="noopener noreferrer" className="text-xs text-brand hover:underline">source</a>}
               </li>
             ))}
-          </ul>
-        )}
-        {channels && (
-          <p className="mt-4 text-xs text-ink-500">Sources checked: {Object.entries(channels).map(([k, v]) => `${CH[k] ?? k} ${v === "ok" ? "✓" : v === "fail" ? "✗ (failed)" : v === "none" ? "– (none exists)" : "– (skipped)"}`).join(" · ")}</p>
+          </ol>
         )}
       </Card>
 
       <Card>
-        <CardTitle>History</CardTitle>
+        <CardTitle>Score history</CardTitle>
         {history.length === 0 ? <p className="text-sm text-ink-500">No snapshots yet.</p> : (
           <ol className="space-y-3 border-l-2 border-dotted border-line pl-4">
             {history.map((h) => (

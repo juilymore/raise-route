@@ -1,7 +1,8 @@
 import clsx from "clsx";
-import { Route } from "lucide-react";
+import { Route, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { RouteMotif } from "@/components/brand/Logo";
+import { CountUp } from "@/components/ui/CountUp";
 
 export function Card({ children, className }: { children: React.ReactNode; className?: string }) {
   return <section className={clsx("rounded-[20px] border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(14,31,43,.04),0_8px_24px_rgba(14,31,43,.04)]", className)}>{children}</section>;
@@ -70,4 +71,28 @@ export function timeAgo(iso: string | null, now = Date.now()): string {
   if (h < 36) return `${h} hour${h === 1 ? "" : "s"} ago`;
   const d = Math.round(h / 24);
   return `${d} day${d === 1 ? "" : "s"} ago`;
+}
+
+const TONE = {
+  green: { bar: "#22C55E", chip: "bg-emerald-50 text-emerald-700" },
+  teal: { bar: "#14B8A6", chip: "bg-teal-50 text-teal-700" },
+  blue: { bar: "#3B82F6", chip: "bg-blue-50 text-blue-700" },
+  gray: { bar: "#9CA3AF", chip: "bg-gray-100 text-gray-600" },
+} as const;
+
+/** Summary tile with an icon, a coloured accent, a count-up number and a plain-language hint. */
+export function StatTile({ label, value, hint, icon: Icon, tone, href, pulse, delay = 0 }: { label: string; value: number; hint: string; icon: LucideIcon; tone: keyof typeof TONE; href: string; pulse?: boolean; delay?: number }) {
+  const t = TONE[tone];
+  return (
+    <Link href={href} className="rr-fade rr-lift group relative block overflow-hidden rounded-[20px] border border-line bg-surface p-4 sm:p-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand" style={{ ["--d" as string]: `${delay}ms` }}>
+      <span className="absolute inset-y-0 left-0 w-1.5" style={{ background: t.bar }} aria-hidden="true" />
+      <div className="flex items-start justify-between">
+        <span className={clsx("grid h-10 w-10 place-items-center rounded-xl", t.chip)}><Icon size={20} aria-hidden="true" /></span>
+        {pulse && value > 0 && <span className="rr-live-dot mt-1 h-2.5 w-2.5 rounded-full bg-emerald-500" aria-hidden="true" />}
+      </div>
+      <div className="mt-3 font-display text-4xl font-bold text-ink-900"><CountUp value={value} /></div>
+      <div className="text-sm font-semibold text-ink-900">{label}</div>
+      <div className="mt-0.5 text-xs text-ink-500">{hint}</div>
+    </Link>
+  );
 }
