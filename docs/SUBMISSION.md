@@ -4,14 +4,15 @@
 |---|---|
 | **Public URL** | https://raiseroute.vercel.app (opens without login; everything is available directly) |
 | **GitHub repository** | https://github.com/juilymore/raise-route (public; Vercel deploys from `main`) |
-| **Components Map** | https://raiseroute.vercel.app/components-map and [`docs/02_ARCHITECTURE_AND_COMPONENTS_MAP.md`](02_ARCHITECTURE_AND_COMPONENTS_MAP.md) |
+| **Components Map** | Image: [`docs/components-map.png`](components-map.png) (also at https://raiseroute.vercel.app/components-map). Detailed table: [`docs/02_ARCHITECTURE_AND_COMPONENTS_MAP.md`](02_ARCHITECTURE_AND_COMPONENTS_MAP.md) |
 | **Login** | none: Run now, editing and drafts are available directly |
-| **AI used** | Gemini Flash only (`gemini-3.8-flash`, fallbacks `gemini-3.6-flash`, `gemini-3.7-flash`). No Claude API in the product: see the AI ledger on any run page (`/runs/<id>`), the database check that rejects non-`gemini-*` model names, and `node scripts/check-compliance.mjs`. |
+| **Database** | Neon Postgres (the brief says Supabase; Neon is the same Postgres, with the same guard design) |
+| **AI used** | Gemini Flash only (`gemini-3.7-flash`, fallbacks `gemini-3.6-flash`, `gemini-3.8-flash`), reached through OpenRouter's `google/gemini-*` models; the Google SDK path is also in the code. No Claude API in the product: see the AI ledger on any run page (`/runs/<id>`), the database check that rejects non-`gemini-*` model names, and `node scripts/check-compliance.mjs`. |
 
 **One-line summary:** twice a week RaiseRoute checks 50 investors against live public sources for the last 30 days, tells the founder who is worth contacting and why with a dated, linked, verified source, keeps quiet investors visible, and never touches his notes or contact history (enforced by the database and proven by a per-run receipt).
 
 ## How it meets the brief
-* **Live data:** official feeds, Google News, nine sector feeds, optional grounded search. Every signal has an event date within 30 days, a source link and a quote verified word for word in the fetched page.
+* **Live data:** official feeds, Google News and nine sector feeds (Gemini search grounding is off on the OpenRouter path). Every signal has an event date within 30 days, a source link and a quote verified word for word in the fetched page.
 * **Twice a week:** Vercel cron `0 3 * * 1,4` calls `/api/cron/run` (bearer secret), plus a founder "Run now" button. Runs are idempotent and chunked (they continue themselves across serverless time limits).
 * **Table stays current:** each run updates `vc_pipeline` signal columns (last signal date, signal summary, follow-up score, recommended action) for all 50 investors through one database function.
 * **Notes untouched:** four-layer Integrity Guard (privileges, single write function, trigger, SHA-256 receipt). `npm run db:test`: 30 checks pass.
