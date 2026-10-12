@@ -5,7 +5,9 @@ A fundraising decision-intelligence tool for a first-time founder (Vikram, Seed 
 (what they wrote, said, invested in or appeared at) on live public sources, explains every recommendation with a dated, linked, verified
 source, and **never touches the founder's notes or contact history**.
 
-![Command Centre](docs/screenshots/command-centre.png)
+![Command Centre, desktop](docs/screenshots/command-centre-desktop.jpg)
+
+<img src="docs/screenshots/command-centre-mobile-390.jpg" alt="Command Centre on a 390px phone" width="260">
 
 > Built for the MESA C4 final exam, Problem 10 (VC Fundraising Pipeline Intelligence). All AI in the product is **Gemini Flash**; there is no Claude/Anthropic API in the product (see `/runs/<id>` → AI ledger and `node scripts/check-compliance.mjs`).
 

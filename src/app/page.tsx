@@ -53,7 +53,7 @@ export default async function CommandCentre() {
       {run && assessed > 0 && (
         <AiBanner
           id={run.id}
-          text={`Scan ${run.status === "RUNNING" ? "in progress" : "complete"}: ${run.signals_qualified} new signal${run.signals_qualified === 1 ? "" : "s"} across ${run.vcs_total} investors, ${changes.length} priority change${changes.length === 1 ? "" : "s"}.`}
+          text={run.status === "RUNNING" ? "A scan is in progress. Results below update as each investor is checked; the numbers are final when it completes." : `Scan complete: ${run.signals_qualified} new signal${run.signals_qualified === 1 ? "" : "s"} across ${run.vcs_total} investors, ${changes.length} priority change${changes.length === 1 ? "" : "s"}.`}
           href={changes.length ? "#changes" : `/runs/${run.id}`}
           cta={changes.length ? "View changes" : "View run"}
         />
