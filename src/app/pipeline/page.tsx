@@ -1,74 +1,47 @@
 import type { Metadata } from "next";
+import { DemoChip } from "@/components/ui/chips";
+import { PipelineBrowser, type PipelineRow } from "@/components/PipelineBrowser";
 import { pageTitle } from "@/config/brand";
-import { getCompanyProfile, getOverview, listVcs } from "@/lib/db/readDb";
+import { getCompanyProfile, listAllCards, listVcs } from "@/lib/db/readDb";
 
 export const metadata: Metadata = { title: pageTitle("Pipeline") };
 export const dynamic = "force-dynamic";
 
-const STATUS_LABEL: Record<string, string> = {
-  TO_REACH_OUT: "To reach out",
-  WAITING_FOR_RESPONSE: "Waiting for response",
-  IN_CONVERSATION: "In conversation",
-  MEETING_SCHEDULED: "Meeting scheduled",
-  PASSED: "Passed",
-};
-
-// P02: minimal read-only list. The designed pipeline table (filters, drawer, board) is built in P07.
-export default async function PipelinePage() {
-  let data;
+export default async function PipelinePage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
+  const sp = await searchParams;
+  let rows: PipelineRow[];
+  let isSample = false;
   try {
-    const [vcs, overview, company] = await Promise.all([listVcs(), getOverview(), getCompanyProfile()]);
-    data = { vcs, overview, company };
+    const [vcs, cards, company] = await Promise.all([listVcs(), listAllCards(), getCompanyProfile()]);
+    isSample = company.isSample;
+    const bySlug = new Map(cards.map((c) => [c.slug, c]));
+    rows = vcs.map((v) => {
+      const c = bySlug.get(v.slug);
+      return {
+        slug: v.slug, firm: v.firm, name: v.name, action: c?.action ?? "NOT_ASSESSED", holdReason: c?.holdReason ?? null, score: c?.score ?? null,
+        lastSignalDate: c?.lastSignalDate ?? null, whyNow: c?.whyNow ?? null, contactStatus: v.contact_status, lastContactDate: v.last_contact_date,
+        region: v.hq_region, assessmentStatus: v.assessment_status,
+      };
+    });
   } catch (e) {
     console.error("[pipeline page]", (e as Error).message);
     return (
-      <main className="mx-auto max-w-3xl px-6 py-16">
+      <div className="mx-auto max-w-xl py-16 text-center">
         <h1 className="font-display text-2xl font-bold">Pipeline</h1>
-        <p className="mt-3 text-ink-500">The database could not be reached. Nothing has been changed. Please try again in a moment.</p>
-      </main>
+        <p className="mt-2 text-ink-500">The database could not be reached. Nothing was changed. Please try again in a moment.</p>
+      </div>
     );
   }
-  const { vcs, overview, company } = data;
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <h1 className="font-display text-3xl font-bold">Pipeline</h1>
-      <p className="mt-1 text-sm text-ink-500">
-        {overview.total} investors · company profile: {company.profile.company_name}
-        {company.isSample && (
-          <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">sample</span>
-        )}
-      </p>
-      <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-900">
-        DEMO relationship data: contact status, dates and notes below are synthetic
+    <div className="mx-auto max-w-[1180px] space-y-4">
+      <div>
+        <h1 className="font-display text-[28px] font-bold text-ink-900 sm:text-[32px]">Pipeline</h1>
+        <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-ink-500">
+          All {rows.length} investors you track. Signals are live from the last 30 days; contact status and dates are <DemoChip>demo data</DemoChip> until you replace them.
+          {isSample && <DemoChip>Sample company</DemoChip>}
+        </p>
       </div>
-
-      <div className="mt-6 overflow-x-auto rounded-2xl border border-line bg-surface shadow-sm">
-        <table className="w-full min-w-[820px] text-left text-[13px]">
-          <thead className="bg-bg text-ink-500">
-            <tr>
-              <th className="px-4 py-3 font-semibold">Firm</th>
-              <th className="px-4 py-3 font-semibold">Thesis</th>
-              <th className="px-4 py-3 font-semibold">Contact status</th>
-              <th className="px-4 py-3 font-semibold">Last contact</th>
-              <th className="px-4 py-3 font-semibold">Notes</th>
-            </tr>
-          </thead>
-          <tbody>
-            {vcs.map((v) => (
-              <tr key={v.id} className="border-t border-line align-top">
-                <td className="px-4 py-3">
-                  <div className="font-medium text-ink-900">{v.firm}</div>
-                  <div className="text-ink-500">{v.name}</div>
-                </td>
-                <td className="max-w-xs px-4 py-3 text-ink-700">{v.thesis ?? "unknown"}</td>
-                <td className="px-4 py-3 text-ink-700">{STATUS_LABEL[v.contact_status] ?? v.contact_status}</td>
-                <td className="px-4 py-3 tabular-nums text-ink-700">{v.last_contact_date ?? "none"}</td>
-                <td className="max-w-xs px-4 py-3 text-ink-700">{v.personal_notes ?? ""}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </main>
+      <PipelineBrowser rows={rows} initial={{ action: sp.action, status: sp.status, attention: sp.attention === "1" }} />
+    </div>
   );
 }

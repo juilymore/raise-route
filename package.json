@@ -19,14 +19,17 @@
     "db:app-role": "node scripts/db-setup-app-role.mjs",
     "smoke:sources": "tsx scripts/smoke-sources.ts",
     "evals": "tsx --conditions=react-server scripts/run-evals.ts",
-    "pipeline:run": "tsx --conditions=react-server scripts/run-pipeline.ts"
+    "pipeline:run": "tsx --conditions=react-server scripts/run-pipeline.ts",
+    "inspect:run": "node scripts/inspect-run.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.28.0",
     "@neondatabase/serverless": "^1.2.0",
     "@vercel/functions": "^3.9.11",
     "cheerio": "^1.2.0",
+    "clsx": "^2.1.1",
     "fast-xml-parser": "^5.11.2",
+    "lucide-react": "^1.55.0",
     "next": "^16.4.0",
     "p-limit": "^7.3.3",
     "react": "^19.3.0",

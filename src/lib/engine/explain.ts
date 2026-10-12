@@ -41,7 +41,8 @@ export function signalSummary(res: ScoreResult, top: { title: string; event_date
   } catch {
     /* keep empty */
   }
-  const src = top.primary_source_name || host;
+  const named = top.primary_source_name && !/^https?:\/\//i.test(top.primary_source_name) ? top.primary_source_name : null;
+  const src = named || host;
   const more = res.qualifying > 1 ? ` (+${res.qualifying - 1} more signal${res.qualifying > 2 ? "s" : ""})` : "";
   return `${top.title} (${top.event_date}${src ? `, ${src}` : ""})${more}`.slice(0, 400);
 }
