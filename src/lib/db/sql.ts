@@ -15,7 +15,8 @@ export function buildInsert(allowed: readonly string[], table: string, row: Reco
   const text = `insert into public.${assertIdent(table)} (${cols.join(", ")}) values (${cols.map((_, i) => `$${i + 1}`).join(", ")}) returning *`;
   const values = cols.map((c) => {
     const v = row[c];
-    return v !== null && typeof v === "object" && !(v instanceof Date) ? JSON.stringify(v) : v;
+    // Plain objects become jsonb; arrays are passed through as Postgres arrays (text[], uuid[]).
+    return v !== null && typeof v === "object" && !(v instanceof Date) && !Array.isArray(v) ? JSON.stringify(v) : v;
   });
   return { text, values };
 }

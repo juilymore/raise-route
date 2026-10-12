@@ -5,13 +5,16 @@ import { notFound } from "next/navigation";
 import { ActionChip, DemoChip, SourceChip, TagAI, TagYou } from "@/components/ui/chips";
 import { Card, CardTitle, EmptyState, Stat } from "@/components/ui/cards";
 import { ScoreRing } from "@/components/ui/ScoreRing";
+import { FeedbackButtons } from "@/components/founder/FeedbackButtons";
+import { OutcomeForm } from "@/components/founder/OutcomeForm";
+import { OutreachDrafter } from "@/components/founder/OutreachDrafter";
 import { RelationshipEditor } from "@/components/founder/RelationshipEditor";
 import { StageTracker } from "@/components/StageTracker";
 import { currentIsFounder } from "@/lib/founder/server";
 import { pageTitle } from "@/config/brand";
 import { getConfig } from "@/lib/config";
 import { daysBetween } from "@/lib/engine/scoring";
-import { getVcDetail, type SignalRow } from "@/lib/db/readDb";
+import { getLatestRecommendationId, getVcDetail, listDrafts, type SignalRow } from "@/lib/db/readDb";
 
 export const dynamic = "force-dynamic";
 
@@ -51,6 +54,9 @@ export default async function VcPage({ params }: { params: Promise<{ slug: strin
   if (!data) notFound();
   const { vc, signals, history, taskStats } = data;
   const founder = await currentIsFounder().catch(() => false);
+  const recId = founder ? await getLatestRecommendationId(vc.id).catch(() => null) : null;
+  const drafts = founder ? await listDrafts(vc.id).catch(() => []) : [];
+  const advisable = vc.recommended_action === "REACH_OUT_NOW" || vc.recommended_action === "FOLLOW_UP_NOW";
   const cfg = getConfig().scoring;
   const today = new Date().toISOString().slice(0, 10);
   const top = signals.find((s) => s.event_date === vc.last_signal_date) ?? signals[0];
@@ -72,6 +78,10 @@ export default async function VcPage({ params }: { params: Promise<{ slug: strin
           <ScoreRing score={vc.follow_up_score} size={64} />
         </div>
       </header>
+
+      {vc.last_assessed_at && (
+        <p className="-mt-3 text-xs text-ink-500" title="Recommendations are immutable snapshots of a run">As of {vc.last_assessed_at.slice(0, 16).replace("T", " ")} UTC · scoring {vc.scoring_version ?? "–"}</p>
+      )}
 
       {vc.action_reason && (
         <p className="rounded-2xl bg-bg px-4 py-3 text-[15px] text-ink-700"><span className="mr-2 align-middle"><TagAI /></span>{vc.action_reason}</p>
@@ -120,6 +130,19 @@ export default async function VcPage({ params }: { params: Promise<{ slug: strin
           {founder && <RelationshipEditor vcId={vc.id} status={vc.contact_status} lastContact={vc.last_contact_date} reconnectAfter={vc.reconnect_after} notes={vc.personal_notes} />}
         </Card>
       </div>
+
+      {founder && (
+        <Card>
+          <CardTitle aside={<TagYou />}>Your next step</CardTitle>
+          <div className="grid gap-5 lg:grid-cols-2">
+            <div className="space-y-4">
+              <OutreachDrafter vcId={vc.id} advisable={advisable} saved={drafts} />
+              {recId && <div><p className="mb-1 text-xs font-semibold text-ink-700">Was this recommendation useful?</p><FeedbackButtons recommendationId={recId} /></div>}
+            </div>
+            <OutcomeForm vcId={vc.id} recommendationId={recId} />
+          </div>
+        </Card>
+      )}
 
       <Card>
         <CardTitle aside={<TagAI>AI-extracted · code-verified</TagAI>}>Evidence</CardTitle>

@@ -45,6 +45,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
           <main id="main" className="min-w-0 flex-1 px-4 py-6 sm:px-6 md:py-8">{children}</main>
         </div>
         <footer className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 border-t border-line px-4 py-3 text-xs text-ink-500">
+          <Link href="/calibration" className="hover:text-brand">Calibration</Link>
           <Link href="/components-map" className="hover:text-brand">Components map</Link>
           <Link href="/data-honesty" className="hover:text-brand">Data honesty</Link>
           <span>All AI in this app is Gemini Flash</span>

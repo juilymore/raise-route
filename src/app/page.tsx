@@ -7,6 +7,7 @@ import { ActionChip, DemoChip } from "@/components/ui/chips";
 import { Card, CardTitle, EmptyState, KpiCard, timeAgo } from "@/components/ui/cards";
 import { getCompanyProfile, getLastRun, getOverview, listChanges, listIncomplete, listQuiet, listTodaysActions } from "@/lib/db/readDb";
 import { getConfig } from "@/lib/config";
+import { currentIsFounder } from "@/lib/founder/server";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +33,7 @@ export default async function CommandCentre() {
     );
   }
   const { overview: o, actions, changes, quiet, incomplete, run, company } = d;
+  const founder = await currentIsFounder().catch(() => false);
   const quietCopy = getConfig().scoring.language.quiet;
   const worthContacting = o.reach_out_now + o.follow_up_now;
   const needsAttention = o.hold + o.assessment_incomplete;
@@ -77,7 +79,7 @@ export default async function CommandCentre() {
             />
           ) : (
             <div className="space-y-3">
-              {actions.slice(0, 5).map((c) => <ActionCard key={c.slug} c={c} />)}
+              {actions.slice(0, 5).map((c) => <ActionCard key={c.slug} c={c} founder={founder} />)}
               {actions.length > 5 && <Link href="/pipeline?attention=0&action=REACH_OUT_NOW" className="block py-2 text-center text-sm font-semibold text-brand hover:underline">Show {actions.length - 5} more</Link>}
             </div>
           )}

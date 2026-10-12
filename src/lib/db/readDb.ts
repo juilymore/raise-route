@@ -94,13 +94,15 @@ export interface ActionCardData {
   prevScore: number | null;
   fitScore: number | null;
   assessmentStatus: string;
+  recommendationId: string | null;
 }
 
 const CARD_SQL = `
   select v.slug, v.firm, v.name, v.recommended_action, v.follow_up_score, v.signal_summary, v.last_signal_date, v.contact_status, v.hold_reason,
          v.action_reason, v.prev_recommended_action, v.prev_follow_up_score, v.fit_score, v.assessment_status,
-         s.primary_source_url, s.excerpt_verified
+         s.primary_source_url, s.excerpt_verified, rec.id as recommendation_id
     from public.vc_pipeline v
+    left join lateral (select id from public.recommendations x where x.vc_id = v.id order by x.created_at desc limit 1) rec on true
     left join lateral (select primary_source_url, excerpt_verified from public.signals x where x.vc_id = v.id order by x.event_date desc, x.created_at desc limit 1) s on true`;
 
 const toCard = (r: Row): ActionCardData => {
@@ -119,6 +121,7 @@ const toCard = (r: Row): ActionCardData => {
     actionReason: (r.action_reason as string | null) ?? null, prevAction: (r.prev_recommended_action as string | null) ?? null,
     prevScore: r.prev_follow_up_score === null || r.prev_follow_up_score === undefined ? null : Number(r.prev_follow_up_score),
     fitScore: r.fit_score === null || r.fit_score === undefined ? null : Number(r.fit_score), assessmentStatus: String(r.assessment_status),
+    recommendationId: (r.recommendation_id as string | null) ?? null,
   };
 };
 
@@ -266,4 +269,21 @@ export async function getRunDetail(id: string) {
     await query("select kind, url, label, status, last_http_status, last_error, consecutive_failures, last_checked_at from public.source_registry where vc_id is null order by label")
   ).map((s) => ({ kind: String(s.kind), url: String(s.url), label: (s.label as string | null) ?? null, status: String(s.status), http: s.last_http_status === null ? null : Number(s.last_http_status), error: (s.last_error as string | null) ?? null, failures: Number(s.consecutive_failures), checked: T(s.last_checked_at) }));
   return { run, tasks, rejected, llm: llm as Array<{ model: string; purpose: string; status: string; calls: number; tin: number; tout: number }>, sources };
+}
+
+export async function getCalibrationData() {
+  const feedback = (await query("select vote, reasons from public.feedback")).map((f) => ({ vote: f.vote as "POSITIVE" | "NEGATIVE", reasons: (f.reasons as string[]) ?? [] }));
+  const outcomes = (await query("select outcome from public.outreach_outcomes")).map((o) => ({ outcome: o.outcome as "RESPONSE_RECEIVED" | "MEETING_BOOKED" | "PASSED" | "NO_RESPONSE" }));
+  const drafts = await query<{ n: number }>("select count(*)::int as n from public.outreach_drafts");
+  return { feedback, outcomes, drafts: Number(drafts[0]?.n ?? 0) };
+}
+
+export async function listDrafts(vcId: string, limit = 3) {
+  const rows = await query("select id, subject, body, model, created_at from public.outreach_drafts where vc_id = $1 order by created_at desc limit $2", [vcId, limit]);
+  return rows.map((d) => ({ id: String(d.id), subject: String(d.subject), body: String(d.body), model: String(d.model), createdAt: T(d.created_at)! }));
+}
+
+export async function getLatestRecommendationId(vcId: string): Promise<string | null> {
+  const [r] = await query<{ id: string }>("select id from public.recommendations where vc_id = $1 order by created_at desc limit 1", [vcId]);
+  return r?.id ?? null;
 }

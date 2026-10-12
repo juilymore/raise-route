@@ -1,11 +1,12 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { ActionChip, DemoChip, SourceChip, TagAI } from "@/components/ui/chips";
+import { FeedbackButtons } from "@/components/founder/FeedbackButtons";
 import { ScoreRing } from "@/components/ui/ScoreRing";
 import type { ActionCardData } from "@/lib/db/readDb";
 
 /** One recommendation: who, how strong, ONE sentence why-now, proof (source + date), next step. Score and chip are the loudest items. */
-export function ActionCard({ c }: { c: ActionCardData }) {
+export function ActionCard({ c, founder = false }: { c: ActionCardData; founder?: boolean }) {
   return (
     <article className="rounded-2xl border border-line bg-surface p-4 transition-shadow hover:shadow-[0_8px_24px_rgba(14,31,43,.08)]">
       <div className="flex items-start gap-3">
@@ -31,6 +32,7 @@ export function ActionCard({ c }: { c: ActionCardData }) {
           Open <ArrowRight size={15} aria-hidden="true" />
         </Link>
       </div>
+      {founder && c.recommendationId && <div className="mt-3 border-t border-line pt-3"><FeedbackButtons recommendationId={c.recommendationId} /></div>}
     </article>
   );
 }
