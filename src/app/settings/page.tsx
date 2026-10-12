@@ -48,7 +48,7 @@ export default async function SettingsPage() {
       </Card>
       <Card>
         <CardTitle>When it runs</CardTitle>
-        <p className="text-sm text-ink-700">There is no automatic schedule. Run it twice a week (for example Monday and Thursday morning) with the Run now button, once founder login is enabled. Each run checks live sources for the last 30 days.</p>
+        <p className="text-sm text-ink-700">It runs automatically every Monday and Thursday at 08:30 IST (03:00 UTC, within the hour on the free plan). You can also press Run now after founder login. Each run checks live sources for the last 30 days.</p>
       </Card>
     </div>
   );

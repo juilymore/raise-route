@@ -25,7 +25,7 @@ source, and **never touches the founder's notes or contact history**.
 
 ## Architecture
 ```
-Run now / API trigger ─► orchestrator (idempotent run_key, task queue, time-boxed chunks that continue themselves)
+Vercel cron (Mon+Thu) / Run now / API trigger ─► orchestrator (idempotent run_key, task queue, time-boxed chunks that continue themselves)
    per investor: sources ─► SSRF-safe fetch ─► validators ─► Gemini extract (no tools) ─► validators ─► signals
                  ─► score + action (pure code) ─► immutable recommendation snapshot ─► apply_assessment()  ← the ONLY write to vc_pipeline
 Neon Postgres: vc_pipeline (your table) + append-only history (signals, evidence_candidates, recommendations, runs, llm_calls …)
