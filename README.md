@@ -23,7 +23,7 @@ source, and **never touches the founder's notes or contact history**.
 | **Quiet vs. failed** | "Quiet" needs adequate source coverage. If a source failed, the investor is **Incomplete**, never quiet. |
 
 ## Pages
-`/` Command Centre (with a collapsed Opportunity Matrix) · `/pipeline` table + board with filters, CSV and "view as of an earlier run" · `/vc/[slug]` score breakdown, evidence, relationship, history, Gemini outreach draft, feedback and outcomes · `/runs`, `/runs/[id]` run audit (rejected evidence, source health, AI ledger, integrity receipt) · `/digests` immutable email archive · `/calibration` feedback and outcomes with sample sizes · `/settings` · `/components-map` · `/data-honesty`. Public visitors are read-only; the founder passcode unlocks **Run now**, editing notes/status/dates and the company profile.
+`/` Command Centre (with a collapsed Opportunity Matrix) · `/pipeline` table + board with filters, CSV and "view as of an earlier run" · `/vc/[slug]` score breakdown, evidence, relationship, history, Gemini outreach draft, feedback and outcomes · `/runs`, `/runs/[id]` run audit (rejected evidence, source health, AI ledger, integrity receipt) · `/digests` immutable email archive · `/calibration` feedback and outcomes with sample sizes · `/settings` · `/components-map` · `/data-honesty`. There is no login: anyone can use **Run now**, edit notes/status/dates, the company profile and the scoring table (Settings). The database still blocks every write to system columns.
 
 ## Architecture
 ```
@@ -60,7 +60,7 @@ npm run scan:secrets              # greps the build output and tracked files for
 | `DATABASE_URL` | Neon pooled connection string for the restricted role `app_service` |
 | `DATABASE_URL_UNPOOLED` | Neon owner connection string (migrations and tests only) |
 | `GEMINI_API_KEY`, `GEMINI_MODEL_PRIMARY`, `GEMINI_MODEL_FALLBACKS` | Gemini Flash (default `gemini-3.8-flash`, fallbacks `gemini-3.6-flash,gemini-3.7-flash`) |
-| `FOUNDER_ACCESS_CODE`, `SESSION_SECRET` | Founder login (passcode, cookie signing secret) |
+| `FOUNDER_ACCESS_CODE`, `SESSION_SECRET` | Not used any more (login was removed); can be deleted |
 | `CRON_SECRET` | Bearer secret for `/api/cron/run` and `/api/pipeline/continue` |
 | `PIPELINE_TIME_BUDGET_MS`, `LLM_MAX_CALLS_PER_RUN`, `MANUAL_RUN_COOLDOWN_MINUTES` | Run limits |
 | `RESEND_API_KEY`, `DIGEST_RECIPIENT`, `DIGEST_FROM`, `DIGEST_AUTO_SEND` | Email digest through Resend (auto-send only after cron runs when true; manual runs never auto-send) |
@@ -85,7 +85,7 @@ Vercel's free plan runs a cron job once within the scheduled hour (Mon and Thu, 
 * No LinkedIn/X (terms of service) and no paid data vendors.
 * Many publishers block bots or paywall pages; those candidates are rejected as `FETCH_FAILED` and the investor may show **Incomplete** instead of Quiet. That is deliberate.
 * Google News links are decoded through an undocumented Google endpoint that can change; failures are reported, never treated as "nothing found".
-* The in-memory rate limiter protects a single serverless instance only; the passcode check also uses a constant-time compare and a delay.
+* The in-memory rate limiter protects a single serverless instance only. Editing and Run now are open to every visitor (login removed on request); a cooldown limits manual runs.
 * The Content-Security-Policy allows inline scripts that Next.js needs (no per-request nonce yet).
 * Gemini output is non-deterministic: in 15 labelled cases quote-found was 14/14 on the latest run and 11/12 on an earlier run; any miss is rejected by validator V9, so an unverified quote never becomes a signal.
 * The company geography is free text; it is mapped to a region label only when it clearly names one.

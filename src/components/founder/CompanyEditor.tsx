@@ -7,7 +7,7 @@ interface Props {
   company_name: string; product_description: string; sector: string; stage: string; geography: string | null; icp: string | null; relevance_keywords: string[];
 }
 
-/** Founder-only company profile editor (Settings). Saving also removes the "sample" label. */
+/** Founder-only company profile editor (Settings). */
 export function CompanyEditor(p: Props) {
   const router = useRouter();
   const [f, setF] = useState({ ...p, geography: p.geography ?? "", icp: p.icp ?? "", keywords: p.relevance_keywords.join(", ") });
@@ -31,7 +31,7 @@ export function CompanyEditor(p: Props) {
   };
   const field = "mt-1 min-h-[44px] w-full rounded-xl border border-line bg-white px-3 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand";
   return (
-    <form onSubmit={save} className="mt-4 space-y-3 rounded-2xl border border-amber-300 bg-amber-50/50 p-4">
+    <form onSubmit={save} className="mt-4 space-y-3 rounded-2xl border border-line bg-bg p-4">
       <label className="block text-xs font-medium text-ink-700">Company name<input value={f.company_name} onChange={(e) => setF({ ...f, company_name: e.target.value })} required className={field} /></label>
       <label className="block text-xs font-medium text-ink-700">What it does (used to judge relevance)<textarea value={f.product_description} onChange={(e) => setF({ ...f, product_description: e.target.value })} rows={4} required minLength={10} className={`${field} py-2`} /></label>
       <div className="grid gap-3 sm:grid-cols-2">

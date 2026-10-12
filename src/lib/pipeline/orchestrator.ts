@@ -1,5 +1,6 @@
 import pLimit from "p-limit";
 import { getConfig } from "@/lib/config";
+import { applyOverrides, parseStored } from "@/lib/config/effective";
 import { buildAliasIndex } from "@/lib/engine/entities";
 import { daysBetween } from "@/lib/engine/scoring";
 import { createGeminiFromEnv, GeminiClient, type LedgerRow } from "@/lib/gemini";
@@ -56,8 +57,12 @@ export async function runPipeline(opts: RunOptions): Promise<RunResult> {
   const now = opts.deps?.now ?? Date.now;
   const started = now();
   const env = getEnv();
-  const cfg = getConfig();
+  const base = getConfig();
   const db = opts.deps?.db ?? (await import("@/lib/db/pipelineDb")).pipelineDb;
+  // Founder-edited rubric numbers (if any) are layered on the defaults; an invalid stored rubric falls back to the defaults.
+  const getOv = (db as { getScoringOverrides?: () => Promise<unknown> }).getScoringOverrides;
+  const applied = applyOverrides(getOv ? parseStored(await getOv.call(db).catch(() => null)) : null);
+  const cfg = { ...base, scoring: applied.ok ? applied.scoring : base.scoring };
   const today = opts.today ?? isoToday();
   const windowStart = addDays(today, -cfg.scoring.window_days);
 

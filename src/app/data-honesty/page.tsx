@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Card, CardTitle } from "@/components/ui/cards";
-import { DemoChip, LiveChip, TagAI, TagYou } from "@/components/ui/chips";
+import { LiveChip, TagAI, TagYou } from "@/components/ui/chips";
 import { getConfig } from "@/lib/config";
 import { BRAND, pageTitle } from "@/config/brand";
 
@@ -12,15 +12,15 @@ export default function DataHonestyPage() {
     <div className="mx-auto max-w-[900px] space-y-6">
       <div>
         <h1 className="font-display text-[28px] font-bold text-ink-900 sm:text-[32px]">Data honesty</h1>
-        <p className="mt-1 text-sm text-ink-500">What in {BRAND.name} is real, what is demo, and how evidence is checked.</p>
+        <p className="mt-1 text-sm text-ink-500">What in {BRAND.name} is live, what is pre-filled, and how evidence is checked.</p>
       </div>
 
       <Card>
         <CardTitle>What is what</CardTitle>
         <dl className="space-y-4 text-sm text-ink-700">
           <div><dt className="mb-1 flex items-center gap-2 font-semibold text-ink-900"><LiveChip /> Signals and evidence</dt><dd>Every signal (what happened, its date, the source link and the quoted sentence) comes from live public sources fetched at run time. Each quote is checked to exist word for word in the fetched page, and every date must fall in the last 30 days.</dd></div>
-          <div><dt className="mb-1 flex items-center gap-2 font-semibold text-ink-900"><DemoChip /> Relationships</dt><dd>The contact status, last-contact dates, contact history and notes for each investor are <strong>synthetic demo data</strong>. They exist so the relationship-aware advice can be shown. They are labelled everywhere, and replacing them with real information is the founder&apos;s job.</dd></div>
-          <div><dt className="mb-1 flex items-center gap-2 font-semibold text-ink-900"><DemoChip>Sample company</DemoChip> Company profile</dt><dd>The company profile (&quot;FreightLoop&quot;) is a fictional sample so relevance scoring has realistic context. It stays labelled &quot;sample&quot; until the founder saves their own in Settings.</dd></div>
+          <div><dt className="mb-1 flex items-center gap-2 font-semibold text-ink-900">Relationships</dt><dd>The contact status, last-contact dates, contact history and notes for each investor were <strong>pre-filled as starter (synthetic) data</strong> so the relationship-aware advice can be shown. Edit them on each investor&apos;s page; the system never changes them.</dd></div>
+          <div><dt className="mb-1 flex items-center gap-2 font-semibold text-ink-900">Company profile</dt><dd>The company profile (FreightLoop) gives relevance scoring its context. Edit it in Settings.</dd></div>
           <div><dt className="mb-1 font-semibold text-ink-900">Investor profiles</dt><dd>Thesis, stage and sector tags in the starting list are unverified hints, not facts. Where something is unknown it stays unknown and counts as neutral in the score.</dd></div>
           <div><dt className="mb-1 flex items-center gap-2 font-semibold text-ink-900"><TagAI /> AI-derived vs <TagYou /> founder-entered</dt><dd>Text produced by AI is tagged violet. Text the founder wrote is tagged amber. Scores and actions are not written by AI: plain code computes them from verified facts.</dd></div>
         </dl>

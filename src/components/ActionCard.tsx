@@ -1,6 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { ActionChip, DemoChip, SourceChip, TagAI } from "@/components/ui/chips";
+import { ActionChip, SourceChip, TagAI } from "@/components/ui/chips";
 import { FeedbackButtons } from "@/components/founder/FeedbackButtons";
 import { ScoreRing } from "@/components/ui/ScoreRing";
 import type { ActionCardData } from "@/lib/db/readDb";
@@ -13,7 +13,7 @@ export function ActionCard({ c, founder = false }: { c: ActionCardData; founder?
         <ScoreRing score={c.score} />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <h3 className="font-display text-base font-semibold text-ink-900">{c.firm}</h3>
+            <h3 className="font-display text-base font-semibold text-ink-900"><Link href={`/vc/${c.slug}`} className="hover:text-brand">{c.firm}</Link></h3>
             <ActionChip action={c.action} holdReason={c.holdReason} />
           </div>
           <p className="text-[13px] text-ink-500">{c.name}</p>
@@ -26,7 +26,6 @@ export function ActionCard({ c, founder = false }: { c: ActionCardData; founder?
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
         <div className="flex min-w-0 flex-wrap items-center gap-2">
           {c.evidenceUrl && <SourceChip url={c.evidenceUrl} domain={c.evidenceDomain} date={c.lastSignalDate} verified={c.evidenceVerified} />}
-          <DemoChip>Demo relationship</DemoChip>
         </div>
         <Link href={`/vc/${c.slug}`} className="inline-flex min-h-[44px] items-center gap-1 rounded-xl bg-brand px-4 text-sm font-semibold text-white hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">
           Open <ArrowRight size={15} aria-hidden="true" />

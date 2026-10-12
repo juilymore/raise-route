@@ -4,7 +4,7 @@ import { ActionCard } from "@/components/ActionCard";
 import { AiBanner } from "@/components/AiBanner";
 import { RouteMotif } from "@/components/brand/Logo";
 import { OpportunityMatrix } from "@/components/OpportunityMatrix";
-import { ActionChip, DemoChip } from "@/components/ui/chips";
+import { ActionChip } from "@/components/ui/chips";
 import { Card, CardTitle, EmptyState, KpiCard, timeAgo } from "@/components/ui/cards";
 import { getCompanyProfile, getLastRun, getOverview, listAllCards, listChanges, listIncomplete, listQuiet, listTodaysActions } from "@/lib/db/readDb";
 import { getConfig } from "@/lib/config";
@@ -37,7 +37,6 @@ export default async function CommandCentre() {
   const founder = await currentIsFounder().catch(() => false);
   const quietCopy = getConfig().scoring.language.quiet;
   const worthContacting = o.reach_out_now + o.follow_up_now;
-  const needsAttention = o.hold + o.assessment_incomplete;
   const assessed = o.total - o.not_assessed;
 
   return (
@@ -45,11 +44,11 @@ export default async function CommandCentre() {
       <div className="relative overflow-hidden">
         <RouteMotif className="pointer-events-none absolute right-0 top-0 hidden h-28 w-72 text-brand opacity-[0.07] sm:block" />
         <h1 className="font-display text-[28px] font-bold leading-tight text-ink-900 sm:text-[32px]">{greeting()}, Vikram</h1>
+        <p className="mt-0.5 text-sm font-medium text-ink-700">Vikram&apos;s dashboard · {company.profile.company_name}</p>
         <p className="mt-1 text-[15px] text-ink-500">
           {run && assessed > 0
             ? `${worthContacting} investor${worthContacting === 1 ? "" : "s"} worth contacting today. Last checked ${timeAgo(run.completed_at ?? run.started_at)}.`
             : "No investors have been assessed yet. The first run fills this page in."}
-          {company.isSample && <span className="ml-2 align-middle"><DemoChip>Sample company: {company.profile.company_name}</DemoChip></span>}
         </p>
       </div>
 
@@ -66,7 +65,7 @@ export default async function CommandCentre() {
         <KpiCard hero label="Reach out now" value={o.reach_out_now} hint="strong, fresh, relevant" href="/pipeline?action=REACH_OUT_NOW" />
         <KpiCard label="Follow up now" value={o.follow_up_now} hint="new hook since last contact" href="/pipeline?action=FOLLOW_UP_NOW" />
         <KpiCard label="Monitor" value={o.monitor} hint="some activity, not yet" href="/pipeline?action=MONITOR" />
-        <KpiCard label="Needs attention" value={needsAttention} hint={`${o.hold} on hold · ${o.assessment_incomplete} incomplete`} href="/pipeline?attention=1" />
+        <KpiCard label="On hold" value={o.hold} hint="you contacted recently or are waiting for a reply" href="/pipeline?action=HOLD" />
       </section>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
@@ -81,7 +80,7 @@ export default async function CommandCentre() {
           ) : (
             <div className="space-y-3">
               {actions.slice(0, 5).map((c) => <ActionCard key={c.slug} c={c} founder={founder} />)}
-              {actions.length > 5 && <Link href="/pipeline?attention=0&action=REACH_OUT_NOW" className="block py-2 text-center text-sm font-semibold text-brand hover:underline">Show {actions.length - 5} more</Link>}
+              {actions.length > 5 && <Link href="/pipeline?action=REACH_OUT_NOW" className="block py-2 text-center text-sm font-semibold text-brand hover:underline">Show {actions.length - 5} more</Link>}
             </div>
           )}
         </Card>
@@ -134,7 +133,7 @@ export default async function CommandCentre() {
             {incomplete.length > 0 && (
               <p className="mt-4 flex items-start gap-2 rounded-xl bg-orange-50 p-3 text-xs text-orange-900">
                 <Package size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
-                <span><strong>{incomplete.length} investor{incomplete.length === 1 ? "" : "s"} could not be fully checked</strong> (a source was unavailable). That is not evidence of inactivity, so they are not listed as quiet.</span>
+                <span><strong><Link href="/pipeline?action=ASSESSMENT_INCOMPLETE" className="underline">{incomplete.length} investor{incomplete.length === 1 ? "" : "s"} could not be fully checked</Link></strong> (a source was unavailable). That is not evidence of inactivity, so they are not listed as quiet.</span>
               </p>
             )}
           </Card>

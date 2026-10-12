@@ -23,7 +23,7 @@ const COMPONENTS: Array<[string, string, string, string, string]> = [
   ["C15", "Snapshot writer", "Immutable recommendation per run (relationship snapshot has no notes)", "Postgres + immutability trigger", "history, explainability"],
   ["C18", "Dashboard", "Command Centre, pipeline, investor page, runs, settings", "Next.js, Tailwind", "E8, E10 usability"],
   ["C20", "Observability", "Run audit, rejected evidence, source health, AI ledger, integrity receipts", "pipeline_runs, run_tasks, evidence_candidates, llm_calls", "trust, grading evidence"],
-  ["C21", "Auth + rate limiting", "Public read-only; founder passcode cookie; bearer secret for cron; Origin checks", "jose, proxy", "public URL is safe"],
+  ["C21", "Auth + rate limiting", "No login; Origin checks and rate limits on editing routes; bearer secret for cron; the database blocks system-column writes", "zod", "public URL is safe"],
   ["C22", "Quality gates", "Unit, golden, integration, evals, SQL guard tests, compliance script, CI", "Vitest, scripts/check-compliance.mjs", "credibility"],
 ];
 

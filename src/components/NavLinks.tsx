@@ -1,7 +1,7 @@
 "use client";
 
 import clsx from "clsx";
-import { Gauge, LayoutDashboard, Radar, Settings, Truck } from "lucide-react";
+import { LayoutDashboard, Radar, Settings, Truck } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -31,33 +31,6 @@ export function PillNav() {
           {n.label}
         </Link>
       ))}
-    </nav>
-  );
-}
-
-export function IconRail() {
-  const path = usePathname();
-  return (
-    <nav aria-label="Quick navigation" className="hidden w-14 shrink-0 flex-col items-center gap-2 py-4 md:flex">
-      {NAV.map((n) => {
-        const Icon = n.icon;
-        return (
-          <Link
-            key={n.href}
-            href={n.href}
-            title={n.label}
-            aria-label={n.label}
-            aria-current={isActive(path, n.href) ? "page" : undefined}
-            className={clsx(
-              "grid h-10 w-10 place-items-center rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand",
-              isActive(path, n.href) ? "bg-brand text-white" : "text-ink-500 hover:bg-bg hover:text-ink-900",
-            )}
-          >
-            <Icon size={19} aria-hidden="true" />
-          </Link>
-        );
-      })}
-      <span className="mt-auto text-ink-500" aria-hidden="true"><Gauge size={16} /></span>
     </nav>
   );
 }

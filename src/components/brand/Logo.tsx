@@ -1,4 +1,4 @@
-import { BRAND } from "@/config/brand";
+import { BRAND, taglineFor } from "@/config/brand";
 
 /** Route-glyph logo mark: two dots joined by a curved dotted path with an arrow head. Name comes from the brand constant. */
 export function LogoMark({ size = 32 }: { size?: number }) {
@@ -12,13 +12,13 @@ export function LogoMark({ size = 32 }: { size?: number }) {
   );
 }
 
-export function Wordmark() {
+export function Wordmark({ company }: { company?: string }) {
   return (
     <span className="flex items-center gap-2.5">
       <LogoMark />
       <span className="flex flex-col leading-none">
         <span className="font-display text-[17px] font-bold tracking-tight text-ink-900">{BRAND.name}</span>
-        <span className="hidden text-[11px] text-ink-500 sm:block">{BRAND.tagline}</span>
+        <span className="text-[11px] text-ink-500">{company ? taglineFor(company) : BRAND.tagline}</span>
       </span>
     </span>
   );

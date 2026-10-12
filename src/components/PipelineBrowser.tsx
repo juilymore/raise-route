@@ -2,8 +2,9 @@
 
 import { Download, LayoutGrid, Rows3, Search } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { ActionChip, ACTION_STYLE, DemoChip } from "@/components/ui/chips";
+import { ActionChip, ACTION_STYLE } from "@/components/ui/chips";
 import { ScoreRing } from "@/components/ui/ScoreRing";
 
 export interface PipelineRow {
@@ -39,13 +40,13 @@ export function toCsv(rows: PipelineRow[]): string {
   return [head.join(","), ...lines].join("\n");
 }
 
-export function PipelineBrowser({ rows, initial }: { rows: PipelineRow[]; initial: { action?: string; status?: string; attention?: boolean } }) {
+export function PipelineBrowser({ rows, initial }: { rows: PipelineRow[]; initial: { action?: string; status?: string } }) {
+  const router = useRouter();
   const [q, setQ] = useState("");
   const [action, setAction] = useState(initial.action ?? "");
   const [status, setStatus] = useState(initial.status ?? "");
   const [region, setRegion] = useState("");
   const [onlySignal, setOnlySignal] = useState(false);
-  const [attention, setAttention] = useState(!!initial.attention);
   const [sort, setSort] = useState<"action" | "score" | "firm" | "signal">("action");
   const [view, setView] = useState<"table" | "board">("table");
 
@@ -57,8 +58,7 @@ export function PipelineBrowser({ rows, initial }: { rows: PipelineRow[]; initia
       (!action || r.action === action) &&
       (!status || (status === "QUIET" ? r.assessmentStatus === "QUIET" : r.contactStatus === status)) &&
       (!region || r.region === region) &&
-      (!onlySignal || r.score !== null) &&
-      (!attention || r.action === "HOLD" || r.action === "ASSESSMENT_INCOMPLETE"),
+      (!onlySignal || r.score !== null),
     );
     out.sort((a, b) => {
       if (sort === "firm") return a.firm.localeCompare(b.firm);
@@ -67,7 +67,7 @@ export function PipelineBrowser({ rows, initial }: { rows: PipelineRow[]; initia
       return ACTION_ORDER.indexOf(a.action) - ACTION_ORDER.indexOf(b.action) || (b.score ?? -1) - (a.score ?? -1) || a.firm.localeCompare(b.firm);
     });
     return out;
-  }, [rows, q, action, status, region, onlySignal, attention, sort]);
+  }, [rows, q, action, status, region, onlySignal, sort]);
 
   const download = () => {
     const blob = new Blob([toCsv(filtered)], { type: "text/csv;charset=utf-8" });
@@ -105,7 +105,6 @@ export function PipelineBrowser({ rows, initial }: { rows: PipelineRow[]; initia
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex flex-wrap items-center gap-3 text-sm text-ink-700">
             <label className="inline-flex min-h-[44px] items-center gap-2"><input type="checkbox" checked={onlySignal} onChange={(e) => setOnlySignal(e.target.checked)} /> Has a signal</label>
-            <label className="inline-flex min-h-[44px] items-center gap-2"><input type="checkbox" checked={attention} onChange={(e) => setAttention(e.target.checked)} /> Needs attention</label>
             <label className="inline-flex items-center gap-2">Sort
               <select aria-label="Sort" value={sort} onChange={(e) => setSort(e.target.value as typeof sort)} className={sel}>
                 <option value="action">Action, then score</option><option value="score">Score</option><option value="signal">Last signal</option><option value="firm">Firm A–Z</option>
@@ -134,13 +133,13 @@ export function PipelineBrowser({ rows, initial }: { rows: PipelineRow[]; initia
                 <th scope="col" className="px-3 py-3 font-semibold">Action</th>
                 <th scope="col" className="px-3 py-3 text-center font-semibold">Score</th>
                 <th scope="col" className="px-3 py-3 font-semibold">Last signal</th>
-                <th scope="col" className="px-3 py-3 font-semibold">Contact status <DemoChip>demo</DemoChip></th>
+                <th scope="col" className="px-3 py-3 font-semibold">Contact status</th>
                 <th scope="col" className="px-3 py-3 font-semibold">Last contact</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map((r) => (
-                <tr key={r.slug} className="border-t border-line align-middle hover:bg-bg/60">
+                <tr key={r.slug} onClick={() => router.push(`/vc/${r.slug}`)} className="cursor-pointer border-t border-line align-middle hover:bg-bg/60">
                   <td className="px-4 py-3">
                     <Link href={`/vc/${r.slug}`} className="font-medium text-ink-900 hover:text-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand">{r.firm}</Link>
                     <div className="text-ink-500">{r.name}{r.region ? ` · ${r.region}` : ""}</div>

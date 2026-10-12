@@ -2,7 +2,7 @@ import { ArrowLeft, ExternalLink } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ActionChip, DemoChip, SourceChip, TagAI, TagYou } from "@/components/ui/chips";
+import { ActionChip, SourceChip, TagAI, TagYou } from "@/components/ui/chips";
 import { Card, CardTitle, EmptyState, Stat } from "@/components/ui/cards";
 import { ScoreRing } from "@/components/ui/ScoreRing";
 import { FeedbackButtons } from "@/components/founder/FeedbackButtons";
@@ -12,9 +12,8 @@ import { RelationshipEditor } from "@/components/founder/RelationshipEditor";
 import { StageTracker } from "@/components/StageTracker";
 import { currentIsFounder } from "@/lib/founder/server";
 import { pageTitle } from "@/config/brand";
-import { getConfig } from "@/lib/config";
 import { daysBetween } from "@/lib/engine/scoring";
-import { getLatestRecommendationId, getVcDetail, listDrafts, type SignalRow } from "@/lib/db/readDb";
+import { getEffectiveScoring, getLatestRecommendationId, getVcDetail, listDrafts, type SignalRow } from "@/lib/db/readDb";
 
 export const dynamic = "force-dynamic";
 
@@ -57,9 +56,14 @@ export default async function VcPage({ params }: { params: Promise<{ slug: strin
   const recId = founder ? await getLatestRecommendationId(vc.id).catch(() => null) : null;
   const drafts = founder ? await listDrafts(vc.id).catch(() => []) : [];
   const advisable = vc.recommended_action === "REACH_OUT_NOW" || vc.recommended_action === "FOLLOW_UP_NOW";
-  const cfg = getConfig().scoring;
+  const cfg = (await getEffectiveScoring()).scoring;
   const today = new Date().toISOString().slice(0, 10);
   const top = signals.find((s) => s.event_date === vc.last_signal_date) ?? signals[0];
+  const timeline = [
+    ...history.map((h) => ({ key: `a-${h.id}`, by: "ai" as const, at: h.at, title: `Assessed: ${(h.action ?? "").replaceAll("_", " ").toLowerCase()}${h.score !== null ? ` (score ${h.score})` : ""}`, body: h.reason, url: null as string | null })),
+    ...signals.map((s) => ({ key: `s-${s.id}`, by: "ai" as const, at: s.event_date, title: `Signal: ${s.title}`, body: s.summary, url: s.primary_source_url as string | null })),
+    ...vc.contact_history.map((h, i) => ({ key: `c-${i}`, by: "you" as const, at: String(h.at ?? ""), title: String(h.type ?? "contact").replaceAll("_", " "), body: String(h.summary ?? ""), url: null as string | null })),
+  ].sort((a, b) => b.at.localeCompare(a.at));
   const channels = (taskStats?.channels ?? null) as Record<string, string> | null;
   const CH: Record<string, string> = { A: "official feed", B: "news", C: "sector feeds", D: "grounded search" };
 
@@ -87,6 +91,26 @@ export default async function VcPage({ params }: { params: Promise<{ slug: strin
         <p className="rounded-2xl bg-bg px-4 py-3 text-[15px] text-ink-700"><span className="mr-2 align-middle"><TagAI /></span>{vc.action_reason}</p>
       )}
 
+      <Card>
+        <CardTitle aside={<span className="text-xs text-ink-500">latest first</span>}>Full history</CardTitle>
+        {timeline.length === 0 ? <p className="text-sm text-ink-500">Nothing recorded yet.</p> : (
+          <ol className="space-y-3 border-l-2 border-dotted border-line pl-4">
+            {timeline.map((t) => (
+              <li key={t.key} className="relative">
+                <span className={`absolute -left-[22px] top-1.5 h-2.5 w-2.5 rounded-full ${t.by === "you" ? "bg-amber-500" : "bg-brand"}`} aria-hidden="true" />
+                <div className="flex flex-wrap items-center gap-2 text-sm">
+                  {t.by === "you" ? <TagYou /> : <TagAI>AI research</TagAI>}
+                  <span className="font-medium text-ink-900">{t.title}</span>
+                  <span className="text-xs tabular-nums text-ink-500">{t.at.replace("T", " ").slice(0, 16)}</span>
+                </div>
+                {t.body && <p className="mt-0.5 text-sm text-ink-700">{t.body}</p>}
+                {t.url && <a href={t.url} target="_blank" rel="noopener noreferrer" className="text-xs text-brand hover:underline">source</a>}
+              </li>
+            ))}
+          </ol>
+        )}
+      </Card>
+
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardTitle aside={<span className="text-xs text-ink-500">scoring {vc.scoring_version ?? "–"}</span>}>Why this score</CardTitle>
@@ -111,7 +135,7 @@ export default async function VcPage({ params }: { params: Promise<{ slug: strin
         </Card>
 
         <Card>
-          <CardTitle aside={<span className="inline-flex items-center gap-2"><TagYou /><DemoChip /></span>}>Relationship</CardTitle>
+          <CardTitle aside={<TagYou />}>Relationship</CardTitle>
           <StageTracker status={vc.contact_status} />
           <dl className="mt-4 grid grid-cols-2 gap-3">
             <Stat label="Last contact" value={vc.last_contact_date ?? "none"} />
@@ -119,14 +143,14 @@ export default async function VcPage({ params }: { params: Promise<{ slug: strin
           </dl>
           {vc.contact_history.length > 0 && (
             <ul className="mt-4 space-y-1 border-l-2 border-dotted border-line pl-3 text-sm text-ink-700">
-              {vc.contact_history.map((h, i) => <li key={i}><span className="tabular-nums text-ink-500">{h.at}</span> · {String(h.type ?? "").replaceAll("_", " ")} · {h.summary}</li>)}
+              {[...vc.contact_history].sort((a, b) => String(b.at ?? "").localeCompare(String(a.at ?? ""))).map((h, i) => <li key={i}><span className="tabular-nums text-ink-500">{h.at}</span> · {String(h.type ?? "").replaceAll("_", " ")} · {h.summary}</li>)}
             </ul>
           )}
           <div className="mt-4 rounded-xl bg-amber-50 p-3 text-sm text-amber-950">
-            <div className="mb-1 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-amber-800">Your notes <DemoChip>synthetic</DemoChip></div>
+            <div className="mb-1 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-amber-800">Vikram&apos;s notes</div>
             {vc.personal_notes ?? "No notes."}
           </div>
-          <p className="mt-3 text-xs text-ink-500">The system never edits this panel. Editing is for the founder only.</p>
+          <p className="mt-3 text-xs text-ink-500">The system never edits this panel; only you do.</p>
           {founder && <RelationshipEditor vcId={vc.id} status={vc.contact_status} lastContact={vc.last_contact_date} reconnectAfter={vc.reconnect_after} notes={vc.personal_notes} />}
         </Card>
       </div>

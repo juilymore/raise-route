@@ -29,7 +29,7 @@ export default async function CalibrationPage() {
       <Card>
         <CardTitle aside={<span className="text-xs tabular-nums text-ink-500">n = {f.n}</span>}>Feedback on recommendations</CardTitle>
         {f.n === 0 ? (
-          <EmptyState title="No feedback yet" body="Use the thumbs on a recommendation card (founder login required). Ratings are saved for your review." />
+          <EmptyState title="No feedback yet" body="Use the thumbs on a recommendation card. Ratings are saved for your review." />
         ) : (
           <>
             <p className="text-sm text-ink-700"><strong className="tabular-nums">{f.positive}</strong> useful, <strong className="tabular-nums">{f.negative}</strong> not useful ({pct(f.usefulRate)} useful, n = {f.n}).</p>

@@ -1,9 +1,7 @@
-import { cookies } from "next/headers";
-import { getEnv } from "@/lib/env";
-import { COOKIE_NAME, verifySessionToken } from "./session";
-
-/** For server components: is the current visitor a logged-in founder? */
+/**
+ * There is no login: every visitor can use Run now and edit notes, the company profile and the scoring table.
+ * Kept as a function so pages read the same way; the database guards (not this flag) protect the system columns.
+ */
 export async function currentIsFounder(): Promise<boolean> {
-  const jar = await cookies();
-  return verifySessionToken(jar.get(COOKIE_NAME)?.value, getEnv().SESSION_SECRET);
+  return true;
 }

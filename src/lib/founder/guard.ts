@@ -1,21 +1,5 @@
 import { NextResponse } from "next/server";
 import { getEnv } from "@/lib/env";
-import { safeEqual } from "@/lib/pipeline/auth";
-import { COOKIE_NAME, verifySessionToken } from "./session";
-
-/** Read the cookie from a Request without next/headers (works in tests and in proxy). */
-export function readCookie(req: Request, name: string): string | undefined {
-  const raw = req.headers.get("cookie") ?? "";
-  for (const part of raw.split(";")) {
-    const i = part.indexOf("=");
-    if (i > 0 && part.slice(0, i).trim() === name) return decodeURIComponent(part.slice(i + 1).trim());
-  }
-  return undefined;
-}
-
-export async function isFounder(req: Request): Promise<boolean> {
-  return verifySessionToken(readCookie(req, COOKIE_NAME), getEnv().SESSION_SECRET);
-}
 
 /**
  * CSRF defence for every mutating request: the Origin header must be present and match this app's own origin
@@ -44,12 +28,12 @@ export function originOk(req: Request): boolean {
 export const json = (body: unknown, status = 200, headers?: Record<string, string>) => NextResponse.json(body, { status, headers });
 
 /**
- * Standard gate for founder mutations: Origin check -> founder cookie -> rate limit. Returns a Response to send, or null to continue.
+ * Standard gate for the editing routes: Origin check -> rate limit. There is no login (removed on request);
+ * the database guards, not this gate, decide which columns can ever be written. Returns a Response to send, or null to continue.
  * (Body validation with zod happens in each route.)
  */
 export async function gateFounder(req: Request, opts: { limitKey: string; max?: number }): Promise<Response | null> {
   if (!originOk(req)) return json({ error: "bad origin" }, 403);
-  if (!(await isFounder(req))) return json({ error: "founder login required" }, 401);
   const rl = rateLimit(`${opts.limitKey}:${clientIp(req)}`, opts.max ?? 30, 60_000);
   if (!rl.ok) return json({ error: "too many requests" }, 429, { "retry-after": String(rl.retryAfter) });
   return null;
@@ -61,7 +45,7 @@ export function clientIp(req: Request): string {
 
 /**
  * Fixed-window in-memory rate limiter. HONEST LIMITATION: state lives in one serverless instance, so on Vercel it slows
- * brute force but is not a global guarantee. The founder passcode check also uses a constant-time compare and a small delay.
+ * abuse but is not a global guarantee.
  */
 const buckets = new Map<string, { n: number; reset: number }>();
 export function rateLimit(key: string, max: number, windowMs: number, now = Date.now()): { ok: boolean; retryAfter: number } {
@@ -74,7 +58,3 @@ export function rateLimit(key: string, max: number, windowMs: number, now = Date
   return b.n > max ? { ok: false, retryAfter: Math.ceil((b.reset - now) / 1000) } : { ok: true, retryAfter: 0 };
 }
 export const _resetRateLimits = () => buckets.clear();
-
-export function codeMatches(input: string, expected: string | undefined): boolean {
-  return !!expected && safeEqual(input, expected);
-}

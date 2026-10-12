@@ -84,6 +84,11 @@ export const pipelineDb = {
     );
     return r;
   },
+  /** Founder-edited scoring numbers (Settings), layered on config/scoring.v1.json at the start of a run. */
+  async getScoringOverrides() {
+    const [r] = await query<{ value: unknown }>("select value from public.app_settings where key = 'scoring_overrides'");
+    return r?.value ?? null;
+  },
   async getRun(runId: string) {
     const [r] = await query<Row>("select * from public.pipeline_runs where id = $1", [runId]);
     return r;

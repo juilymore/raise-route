@@ -14,4 +14,7 @@ export const BRAND = {
   emailFromName: "RaiseRoute",
 } as const;
 
+/** Logo subtitle: the app tagline for the founder's company (name comes from company_profile). */
+export const taglineFor = (company: string) => `Fundraising route mapped for ${company}`;
+
 export const pageTitle = (page?: string) => (page ? `${page} · ${BRAND.name}` : `${BRAND.name} — ${BRAND.tagline}`);

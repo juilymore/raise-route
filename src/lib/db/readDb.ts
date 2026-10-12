@@ -1,5 +1,7 @@
 import "server-only";
 import { query } from "./client";
+import { loadScoring } from "@/lib/config";
+import { applyOverrides, parseStored, type StoredOverrides } from "@/lib/config/effective";
 import { companyProfileSchema, overviewSchema, vcRowSchema } from "./rows";
 
 /** Read-only queries for pages. Rows are validated with zod where the shape matters so schema drift fails loudly. */
@@ -22,6 +24,14 @@ export async function getCompanyProfile() {
   const profile = companyProfileSchema.parse(row);
   const [flag] = await query<{ value: { value?: boolean } }>("select value from public.app_settings where key = 'company_profile_is_sample'");
   return { profile, isSample: flag?.value?.value === true };
+}
+
+/** The scoring rubric in force: defaults plus the founder's edited numbers (if they validate). */
+export async function getEffectiveScoring() {
+  const [row] = await query<{ value: unknown }>("select value from public.app_settings where key = 'scoring_overrides'").catch(() => []);
+  const stored: StoredOverrides | null = parseStored(row?.value);
+  const applied = applyOverrides(stored);
+  return { scoring: applied.ok ? applied.scoring : loadScoring(), edited: !!stored && Object.keys(stored.values).length > 0 && applied.ok, revision: stored?.revision ?? 0 };
 }
 
 export interface RunSummary {
@@ -210,7 +220,7 @@ export async function getVcDetail(slug: string) {
   const [vc] = await query("select * from public.vc_pipeline where slug = $1", [slug]);
   if (!vc) return null;
   const signals = (
-    await query("select * from public.signals where vc_id = $1 order by event_date desc, created_at desc limit 30", [vc.id])
+    await query("select * from public.signals where vc_id = $1 order by event_date desc, created_at desc limit 100", [vc.id])
   ).map((s): SignalRow => ({
     id: String(s.id), signal_type: String(s.signal_type), title: String(s.title), summary: String(s.summary), subject_entity: (s.subject_entity as string | null) ?? null,
     event_date: D(s.event_date)!, event_date_basis: String(s.event_date_basis), published_at: D(s.published_at), primary_source_url: String(s.primary_source_url),

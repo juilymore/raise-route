@@ -2,10 +2,10 @@
 
 | | |
 |---|---|
-| **Public URL** | https://raiseroute.vercel.app (opens without login; visitors are read-only) |
+| **Public URL** | https://raiseroute.vercel.app (opens without login; everything is available directly) |
 | **GitHub repository** | `https://github.com/juilymore/raiseroute` *(to be created public by the owner: `gh repo create raiseroute --public --source=. --remote=origin --push`)* |
 | **Components Map** | https://raiseroute.vercel.app/components-map and [`docs/02_ARCHITECTURE_AND_COMPONENTS_MAP.md`](02_ARCHITECTURE_AND_COMPONENTS_MAP.md) |
-| **Founder passcode** (unlocks Run now, editing, drafts) | `<paste the value of FOUNDER_ACCESS_CODE here before submitting>` |
+| **Login** | none: Run now, editing and drafts are available directly |
 | **AI used** | Gemini Flash only (`gemini-3.8-flash`, fallbacks `gemini-3.6-flash`, `gemini-3.7-flash`). No Claude API in the product: see the AI ledger on any run page (`/runs/<id>`), the database check that rejects non-`gemini-*` model names, and `node scripts/check-compliance.mjs`. |
 
 **One-line summary:** twice a week RaiseRoute checks 50 investors against live public sources for the last 30 days, tells the founder who is worth contacting and why with a dated, linked, verified source, keeps quiet investors visible, and never touches his notes or contact history (enforced by the database and proven by a per-run receipt).
