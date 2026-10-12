@@ -1,0 +1,99 @@
+{
+  "ranAt": "2026-10-12T09:26:19.293Z",
+  "models": "gemini-3.8-flash",
+  "results": [
+    {
+      "id": "C02_listed_among_many",
+      "negative": true,
+      "events": 1,
+      "activityEvents": 1,
+      "checks": [
+        {
+          "name": "no activity events",
+          "ok": false,
+          "detail": "1 activity event(s)"
+        }
+      ],
+      "quoteTotal": 1,
+      "quoteFound": 1,
+      "action": "DONT_PRIORITIZE",
+      "reason": "GENERIC_ACTIVITY_NOT_RELEVANT",
+      "rejected": [],
+      "eventsDetail": [
+        {
+          "vc_role": "participating_investor",
+          "signal_type": "investment",
+          "relevance_tier": "b2b_saas",
+          "event_date": "2026-10-08",
+          "subject_entity": "LedgerLy",
+          "evidence_excerpt": "Fintech startup LedgerLy raised $12 million in a Series A. The round saw participation from a dozen investors including Accel, Peak XV Partners, Elevation Capital, Blume Ventures",
+          "commitment": "reported",
+          "uncertainties": []
+        }
+      ]
+    },
+    {
+      "id": "C03_essay_supply_chain",
+      "negative": false,
+      "events": 1,
+      "activityEvents": 1,
+      "checks": [
+        {
+          "name": ">= 1 activity event",
+          "ok": true
+        },
+        {
+          "name": "role=author",
+          "ok": true,
+          "detail": "author"
+        },
+        {
+          "name": "signal_type in [\"blog_post\",\"thesis_update\"]",
+          "ok": true
+        },
+        {
+          "name": "tier in [\"direct\",\"adjacent\"]",
+          "ok": true,
+          "detail": "direct"
+        },
+        {
+          "name": "event_date=2026-10-02",
+          "ok": true,
+          "detail": "2026-10-02"
+        }
+      ],
+      "quoteTotal": 1,
+      "quoteFound": 1,
+      "action": "REACH_OUT_NOW",
+      "reason": "STRONG_RELEVANT_SIGNAL",
+      "rejected": [],
+      "eventsDetail": [
+        {
+          "vc_role": "author",
+          "signal_type": "thesis_update",
+          "relevance_tier": "direct",
+          "event_date": "2026-10-02",
+          "subject_entity": "Blume Ventures",
+          "evidence_excerpt": "We are actively looking to back founders building shipment visibility, route optimisation and warehouse tools. Written by the Blume Ventures investment team.",
+          "commitment": "confirmed",
+          "uncertainties": []
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "llm_calls": 2,
+    "llm_tokens_in": 1288,
+    "llm_tokens_out": 585,
+    "search_calls": 0,
+    "cap": 200
+  },
+  "summary": {
+    "quoteTotal": 2,
+    "quoteFound": 2,
+    "falseReach": 0,
+    "negatives": 1,
+    "checks": 6,
+    "checksFailed": 1
+  }
+}

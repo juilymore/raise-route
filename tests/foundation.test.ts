@@ -44,12 +44,12 @@ describe("env", () => {
     const env = parseEnv({ GEMINI_API_KEY: "", DATABASE_URL: "" });
     expect(env.GEMINI_API_KEY).toBeUndefined();
     expect(env.GEMINI_MODEL_PRIMARY).toBe("gemini-3.8-flash");
-    expect(env.GEMINI_MODEL_FALLBACKS).toEqual(["gemini-3.6-flash", "gemini-2.5-flash"]);
+    expect(env.GEMINI_MODEL_FALLBACKS).toEqual(["gemini-3.6-flash", "gemini-3.7-flash"]);
     expect(env.PIPELINE_TIME_BUDGET_MS).toBe(240000);
   });
   it("rejects non-Gemini model ids", () => {
     expect(() => parseEnv({ GEMINI_MODEL_PRIMARY: "gpt-4o" })).toThrow();
-    expect(() => parseEnv({ GEMINI_MODEL_FALLBACKS: "gemini-2.5-flash,other-model" })).toThrow();
+    expect(() => parseEnv({ GEMINI_MODEL_FALLBACKS: "gemini-3.7-flash,other-model" })).toThrow();
   });
   it("presence report contains booleans only, never values", () => {
     const env = parseEnv({ GEMINI_API_KEY: "super-secret-key", DATABASE_URL: "postgres://u:p@h/db" });

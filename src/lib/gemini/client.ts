@@ -153,6 +153,10 @@ export class GeminiClient {
   stats() {
     return { llm_calls: this.calls, llm_tokens_in: this.tokensIn, llm_tokens_out: this.tokensOut, search_calls: this.searchCalls, cap: this.cfg.maxCallsPerRun };
   }
+  /** The cap is per RUN: when a run continues in a new invocation, calls already in the ledger are counted here. */
+  setCallsUsed(n: number) {
+    this.calls = n;
+  }
   get capReached() {
     return this.calls >= this.cfg.maxCallsPerRun;
   }
@@ -280,9 +284,25 @@ export class GeminiClient {
   }
 }
 
-/** zod -> JSON Schema for responseJsonSchema (drops $schema; Gemini ignores unknown keywords poorly). */
+/**
+ * Keywords the Gemini structured-output endpoint rejects with HTTP 400 INVALID_ARGUMENT (found by bisecting live on 2026-10-12).
+ * Our zod schema still enforces every one of them on the response (V11), so stripping them only loosens what the model is TOLD.
+ */
+const GEMINI_UNSUPPORTED = new Set(["pattern", "additionalProperties", "maxItems", "minItems", "maxLength", "minLength", "minimum", "maximum", "format", "$schema"]);
+
+export function stripUnsupported(node: unknown): unknown {
+  if (Array.isArray(node)) return node.map(stripUnsupported);
+  if (node && typeof node === "object") {
+    return Object.fromEntries(
+      Object.entries(node as Record<string, unknown>)
+        .filter(([k]) => !GEMINI_UNSUPPORTED.has(k))
+        .map(([k, v]) => [k, stripUnsupported(v)]),
+    );
+  }
+  return node;
+}
+
+/** zod -> JSON Schema for responseJsonSchema. */
 export function toGeminiJsonSchema(schema: ZodType): unknown {
-  const js = z.toJSONSchema(schema, { target: "draft-7" }) as Record<string, unknown>;
-  delete js.$schema;
-  return js;
+  return stripUnsupported(z.toJSONSchema(schema, { target: "draft-7" }));
 }

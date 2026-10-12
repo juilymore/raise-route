@@ -13,7 +13,7 @@ const schema = z.object({
   GEMINI_MODEL_PRIMARY: z.string().startsWith("gemini-").default("gemini-3.8-flash"),
   GEMINI_MODEL_FALLBACKS: z
     .string()
-    .default("gemini-3.6-flash,gemini-2.5-flash")
+    .default("gemini-3.6-flash,gemini-3.7-flash")
     .transform((s) => s.split(",").map((x) => x.trim()).filter(Boolean))
     .pipe(z.array(z.string().startsWith("gemini-"))),
   GEMINI_ENABLE_GROUNDING: bool(true),

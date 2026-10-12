@@ -227,9 +227,10 @@ describe("helpers", () => {
     expect(parseRetryDelaySeconds("nothing")).toBeNull();
   });
   it("produces a Gemini-friendly JSON schema without $schema", () => {
-    const js = toGeminiJsonSchema(z.object({ a: z.number() })) as Record<string, unknown>;
+    const js = toGeminiJsonSchema(z.object({ a: z.number().max(5), b: z.string().max(10).regex(/^x$/) }).strict()) as Record<string, unknown>;
     expect(js.$schema).toBeUndefined();
     expect(js.type).toBe("object");
+    expect(JSON.stringify(js)).not.toMatch(/pattern|maxLength|maximum|additionalProperties/);
   });
   it("GeminiError carries a kind", () => {
     expect(new GeminiError("x", "NO_KEY").kind).toBe("NO_KEY");
