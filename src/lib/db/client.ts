@@ -25,6 +25,7 @@ export async function ping(): Promise<{ ok: true; ms: number } | { ok: false; er
     await query("select 1");
     return { ok: true, ms: Date.now() - t };
   } catch (e) {
-    return { ok: false, error: (e as Error).message.slice(0, 200) };
+    console.error("[db ping failed]", (e as Error).message);
+    return { ok: false, error: "database unreachable" };
   }
 }

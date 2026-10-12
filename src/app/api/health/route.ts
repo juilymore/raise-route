@@ -22,9 +22,7 @@ export async function GET() {
       checkedAt: new Date().toISOString(),
     });
   } catch (e) {
-    return NextResponse.json(
-      { app: BRAND.name, ok: false, error: "Configuration problem", detail: (e as Error).message.slice(0, 300) },
-      { status: 500 },
-    );
+    console.error("[health] configuration problem:", (e as Error).message);
+    return NextResponse.json({ app: BRAND.name, ok: false, error: "Configuration problem (see server logs)" }, { status: 500 });
   }
 }

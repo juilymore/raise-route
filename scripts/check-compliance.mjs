@@ -38,6 +38,17 @@ for (const lock of ["package-lock.json", "pnpm-lock.yaml", "yarn.lock", "bun.loc
   if (existsSync(p) && /@anthropic-ai\//.test(readFileSync(p, "utf8"))) fail("R1", p, "lockfile contains @anthropic-ai/*");
 }
 
+// founderDb may be imported only by founder-facing code (api/founder routes, lib/founder, tests) and itself.
+const FOUNDER_IMPORT = /founderDb(?:.[jt]sx?)?['"`]/;
+const FOUNDER_ALLOWED = /[\/](api[\/]founder|lib[\/]founder|lib[\/]db[\/]founderDb.ts)([\/.]|$)/;
+{
+  const src = join(ROOT, "src");
+  if (existsSync(src)) for (const f of walk(src)) {
+    if (!/.(ts|tsx|js|jsx)$/.test(f) || FOUNDER_ALLOWED.test(f)) continue;
+    if (FOUNDER_IMPORT.test(readFileSync(f, "utf8"))) fail("R2", f, "founderDb imported outside founder-facing code");
+  }
+}
+
 // R2 — pipeline layer must never write founder data
 const pipelineDirs = ["src/lib/pipeline", "src/lib/engine", "src/lib/gemini", "src/lib/sources", "src/app/api/cron", "src/app/api/pipeline"];
 for (const d of pipelineDirs) {
@@ -61,7 +72,7 @@ if (existsSync(srcDir)) {
     if (!/\.(tsx|ts|jsx|js)$/.test(f)) continue;
     const txt = readFileSync(f, "utf8");
     if (/^\s*['"]use client['"]/m.test(txt) && SECRET.test(txt)) fail("R3", f, "client component references a server secret");
-    if (/NEXT_PUBLIC_[A-Z_]*(SECRET|SERVICE|GEMINI|RESEND|CRON)/.test(txt)) fail("R3", f, "secret exposed through NEXT_PUBLIC_*");
+    if (/NEXT_PUBLIC_[A-Z0-9_]+/.test(txt.replace(/^s*(//|*).*$/gm, ""))) fail("R3", f, "NEXT_PUBLIC_* variable used: none are allowed (browser needs no secret)");
   }
 }
 
