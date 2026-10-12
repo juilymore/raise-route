@@ -1,7 +1,7 @@
 /**
  * node scripts/gen-components-map.mjs
  * Draws the swimlane Components Map (actors x stages) as SVG and PNG:
- *   docs/components-map.svg, docs/components-map.png, public/components-map.png
+ *   docs/components-map.svg, docs/components-map.png
  * Content mirrors docs/02_ARCHITECTURE_AND_COMPONENTS_MAP.md.
  */
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -105,9 +105,7 @@ for (const p of Object.values(pos)) {
 svg += `</svg>`;
 
 mkdirSync("docs", { recursive: true });
-mkdirSync("public", { recursive: true });
 writeFileSync("docs/components-map.svg", svg);
 const png = await sharp(Buffer.from(svg), { density: 144 }).png().toBuffer();
 writeFileSync("docs/components-map.png", png);
-writeFileSync("public/components-map.png", png);
 console.log("wrote docs/components-map.svg, docs/components-map.png, public/components-map.png");

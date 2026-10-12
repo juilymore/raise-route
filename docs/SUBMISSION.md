@@ -4,7 +4,7 @@
 |---|---|
 | **Public URL** | https://raiseroute.vercel.app (opens without login; everything is available directly) |
 | **GitHub repository** | https://github.com/juilymore/raise-route (public; Vercel deploys from `main`) |
-| **Components Map** | Image: [`docs/components-map.png`](components-map.png) (also at https://raiseroute.vercel.app/components-map). Detailed table: [`docs/02_ARCHITECTURE_AND_COMPONENTS_MAP.md`](02_ARCHITECTURE_AND_COMPONENTS_MAP.md) |
+| **Components Map** | Image: [`docs/components-map.png`](components-map.png) (submitted as a file, not part of the dashboard). Detailed table: [`docs/02_ARCHITECTURE_AND_COMPONENTS_MAP.md`](02_ARCHITECTURE_AND_COMPONENTS_MAP.md) |
 | **Login** | none: Run now, editing and drafts are available directly |
 | **Database** | Neon Postgres (the brief says Supabase; Neon is the same Postgres, with the same guard design) |
 | **AI used** | Gemini Flash only (`gemini-3.7-flash`, fallbacks `gemini-3.6-flash`, `gemini-3.8-flash`), reached through OpenRouter's `google/gemini-*` models; the Google SDK path is also in the code. No Claude API in the product: see the AI ledger on any run page (`/runs/<id>`), the database check that rejects non-`gemini-*` model names, and `node scripts/check-compliance.mjs`. |
@@ -23,7 +23,7 @@ Three real runs exist (5 investors, 50 investors, and one 50-investor run execut
 
 ## Known limitations (honest list)
 * No LinkedIn/X and no paid data vendors. Many news sites block automated readers, so some investors show **Incomplete** instead of Quiet. This is deliberate.
-* Investor contact status, dates, history and notes are **synthetic demo data**; the company profile ("FreightLoop") is a **sample**; thesis/stage/sector tags are unverified starter hints. All are labelled in the app and on `/data-honesty`.
+* Investor contact status, dates, history and notes are **synthetic demo data**; the company profile ("FreightLoop") is a **sample**; thesis/stage/sector tags are unverified starter hints. This is stated on `/how-we-verify` and here.
 * Gemini output is not perfectly repeatable; the validators, not the model, make the output trustworthy. Evals: 15 labelled cases, 40/40 checks and 14/14 quotes on the latest run (11/12 quotes on an earlier run; a miss is rejected, never used).
 * Google News links are decoded through an undocumented Google endpoint that may change; failure is reported, never treated as "nothing found".
 * The in-memory rate limiter protects one serverless instance only. The CSP allows inline scripts that Next.js needs.

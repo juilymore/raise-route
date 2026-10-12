@@ -23,7 +23,7 @@ source, and **never touches the founder's notes or contact history**.
 | **Quiet vs. failed** | "Quiet" needs adequate source coverage. If a source failed, the investor is **Incomplete**, never quiet. |
 
 ## Pages
-`/` Command Centre (with a collapsed Opportunity Matrix) · `/pipeline` table + board with filters, CSV and "view as of an earlier run" · `/vc/[slug]` score breakdown, evidence, relationship, history, Gemini outreach draft, feedback and outcomes · `/runs`, `/runs/[id]` run audit (rejected evidence, source health, AI ledger, integrity receipt) · `/digests` immutable email archive · `/calibration` feedback and outcomes with sample sizes · `/settings` · `/components-map` · `/data-honesty`. There is no login: anyone can use **Run now**, edit notes/status/dates, the company profile and the scoring table (Settings). The database still blocks every write to system columns.
+`/` Command Centre (with a collapsed Opportunity Matrix) · `/pipeline` table + board with filters, CSV and "view as of an earlier run" · `/vc/[slug]` score breakdown, evidence, relationship, history, Gemini outreach draft, feedback and outcomes · `/runs`, `/runs/[id]` run audit (rejected evidence, source health, AI ledger, integrity receipt) · `/digests` immutable email archive · `/calibration` feedback and outcomes with sample sizes · `/settings` · `/how-we-verify`. There is no login: anyone can use **Run now**, edit notes/status/dates, the company profile and the scoring table (Settings). The database still blocks every write to system columns.
 
 ## Architecture
 ```
@@ -33,7 +33,7 @@ Vercel cron (Mon+Thu) / Run now / API trigger ─► orchestrator (idempotent ru
 Neon Postgres: vc_pipeline (your table) + append-only history (signals, evidence_candidates, recommendations, runs, llm_calls …)
 Next.js (App Router, TypeScript strict) on Vercel · Gemini Flash via @google/genai · Neon via @neondatabase/serverless
 ```
-Full **Components Map**: [`docs/02_ARCHITECTURE_AND_COMPONENTS_MAP.md`](docs/02_ARCHITECTURE_AND_COMPONENTS_MAP.md) (also rendered in the app at `/components-map`).
+Full **Components Map**: [`docs/02_ARCHITECTURE_AND_COMPONENTS_MAP.md`](docs/02_ARCHITECTURE_AND_COMPONENTS_MAP.md) and the picture [`docs/components-map.png`](docs/components-map.png) (a submission file, not part of the app).
 
 ## The Integrity Guard (how your notes are protected)
 Four independent layers, tested by `db/tests/guard_test.sql` (`npm run db:test`):
@@ -72,7 +72,7 @@ npm run scan:secrets              # greps the build output and tracked files for
 ## Costs and limits
 Vercel Hobby, Neon free tier and Google AI Studio. Roughly 7 Gemini calls for 5 investors in the first live trial; a full 50-investor run is on the order of 70–100 calls (estimate, not a bill). Vercel Hobby limits function duration, so a run is split into time-boxed chunks that continue themselves.
 
-## Data honesty
+## Data and trust (also shown in the app at /how-we-verify)
 * **Live:** every signal (event, date, source link, verified quote) comes from live public sources at run time.
 * **Demo / synthetic:** the investors' contact status, last-contact dates, history and notes are **synthetic demo data** and are labelled "Demo data" everywhere; they can never produce a recommendation by themselves.
 * **Sample:** the company profile ("FreightLoop") is a **sample** (`data/company_brief.md`), labelled until the founder saves their own.

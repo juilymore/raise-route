@@ -19,7 +19,7 @@ Method: the `exam-auditor` subagent re-ran commands and queried the live databas
 | E3b no Claude API | PASS | compliance script passes; no dependency or import matches |
 | E4 Vercel + URL | PASS | `curl -I` 200; /api/health shows database reachable and Gemini primary model |
 | E5 GitHub repo | PENDING | public repository not created yet (owner action) |
-| E6 Components Map | PASS | `/components-map` returns 200 with the flow diagram and component table; `docs/02` |
+| E6 Components Map | PASS | delivered as the image `docs/components-map.png` and `docs/02` (removed from the live app on request) |
 | E7 twice a week | PARTIAL, honest note | `vercel.json` has `0 3 * * 1,4`; the cron route is bearer-protected (401 without/with wrong bearer). The one `trigger='cron'` run was a manual, bearer-authenticated call of the cron route made to test that path; a Vercel-**scheduled** run happens at 03:00-03:59 UTC on the next Monday/Thursday (first: Thu 15 Oct 2026). Hobby cron fires within the scheduled hour. |
 | E8 who to contact and why | PASS | live Command Centre shows ranked cards with why-now sentence, dated source and verified-quote mark |
 | E9 30-day observable signals | PASS | 52 signals: 0 unverified quotes, 0 synthetic, 0 older than 30 days, 0 non-http sources; rejections recorded (OLD_EVENT 11, QUOTE_NOT_FOUND 1, SSRF_BLOCKED 1, NOT_ATTRIBUTABLE 88, AMBIGUOUS_ENTITY 60, IRRELEVANT 28, DUPLICATE_SYNDICATED 11, FETCH_FAILED 194); database now also enforces verified quote, http(s) source and no future dates (migration 0005) |

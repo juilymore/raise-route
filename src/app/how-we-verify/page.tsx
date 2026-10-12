@@ -4,19 +4,19 @@ import { LiveChip, TagAI, TagYou } from "@/components/ui/chips";
 import { getConfig } from "@/lib/config";
 import { BRAND, pageTitle } from "@/config/brand";
 
-export const metadata: Metadata = { title: pageTitle("Data honesty") };
+export const metadata: Metadata = { title: pageTitle("How we verify") };
 
-export default function DataHonestyPage() {
+export default function HowWeVerifyPage() {
   const { scoring } = getConfig();
   return (
     <div className="mx-auto max-w-[900px] space-y-6">
       <div>
-        <h1 className="font-display text-[28px] font-bold text-ink-900 sm:text-[32px]">Data honesty</h1>
-        <p className="mt-1 text-sm text-ink-500">What in {BRAND.name} is live, what is pre-filled, and how evidence is checked.</p>
+        <h1 className="font-display text-[28px] font-bold text-ink-900 sm:text-[32px]">How we verify what you see</h1>
+        <p className="mt-1 max-w-2xl text-sm text-ink-500">Before you email an investor you should know why the suggestion can be trusted, and where it can still be wrong. This page explains where each part of {BRAND.name} comes from and how every piece of evidence is checked.</p>
       </div>
 
       <Card>
-        <CardTitle>What is what</CardTitle>
+        <CardTitle>Where each part comes from</CardTitle>
         <dl className="space-y-4 text-sm text-ink-700">
           <div><dt className="mb-1 flex items-center gap-2 font-semibold text-ink-900"><LiveChip /> Signals and evidence</dt><dd>Every signal (what happened, its date, the source link and the quoted sentence) comes from live public sources fetched at run time. Each quote is checked to exist word for word in the fetched page, and every date must fall in the last 30 days.</dd></div>
           <div><dt className="mb-1 flex items-center gap-2 font-semibold text-ink-900">Relationships</dt><dd>The contact status, last-contact dates, contact history and notes for each investor were <strong>pre-filled as starter (synthetic) data</strong> so the relationship-aware advice can be shown. Edit them on each investor&apos;s page; the system never changes them.</dd></div>
