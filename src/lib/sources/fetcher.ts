@@ -177,11 +177,27 @@ export class SafeFetcher {
     const origin = url.origin;
     let entry = this.robotsCache.get(origin);
     if (!entry || (this.deps.now ?? Date.now)() - entry.at > 3_600_000) {
-      const r = await this.hop(new URL("/robots.txt", origin));
       let txt: string | null = null;
-      if ("res" in r && r.res.status === 200) {
-        const buf = await readCapped(r.res.body, 200_000);
-        txt = decodeBody(buf.bytes, r.res.headers.get("content-type") ?? "");
+      let robotsUrl = new URL("/robots.txt", origin);
+      // RFC 9309: follow up to 5 redirects for robots.txt; every hop is SSRF-validated by hop().
+      for (let i = 0; i <= 5; i++) {
+        const r = await this.hop(robotsUrl);
+        if (!("res" in r)) break;
+        if ([301, 302, 303, 307, 308].includes(r.res.status)) {
+          const loc = r.res.headers.get("location");
+          if (!loc) break;
+          try {
+            robotsUrl = new URL(loc, robotsUrl);
+          } catch {
+            break;
+          }
+          continue;
+        }
+        if (r.res.status === 200) {
+          const buf = await readCapped(r.res.body, 200_000);
+          txt = decodeBody(buf.bytes, r.res.headers.get("content-type") ?? "");
+        }
+        break;
       } // 404 / errors => no robots rules known => allowed (RFC 9309: unavailable means allow)
       entry = { at: (this.deps.now ?? Date.now)(), txt };
       this.robotsCache.set(origin, entry);
@@ -191,9 +207,14 @@ export class SafeFetcher {
 
   async fetch(rawUrl: string, opts: { useCache?: boolean; skipRobots?: boolean } = {}): Promise<FetchResult> {
     const useCache = opts.useCache ?? true;
-    if (useCache && this.cache.has(rawUrl)) return this.cache.get(rawUrl)!;
-    const result = await this.fetchUncached(rawUrl, opts.skipRobots ?? false);
-    if (useCache) this.cache.set(rawUrl, result);
+    const skipRobots = opts.skipRobots ?? false;
+    // Cache key includes skipRobots: a result fetched while ignoring robots.txt must never be served to a caller that must honour it.
+    const key = `${skipRobots ? "norobots" : "robots"}|${rawUrl}`;
+    if (useCache && this.cache.has(key)) return this.cache.get(key)!;
+    const result = await this.fetchUncached(rawUrl, skipRobots);
+    // Transient failures (network, timeout, 5xx) are not cached so a later call in the same run can retry.
+    const transient = result.errorCode === "NETWORK" || result.errorCode === "TIMEOUT" || result.status >= 500;
+    if (useCache && !transient) this.cache.set(key, result);
     return result;
   }
 

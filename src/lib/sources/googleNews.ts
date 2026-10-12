@@ -63,6 +63,7 @@ export async function decodeGoogleNewsUrl(link: string, deps: GnDeps): Promise<s
         method: "POST",
         headers: { "content-type": "application/x-www-form-urlencoded;charset=UTF-8", "user-agent": "Mozilla/5.0" },
         body: b,
+        redirect: "error", // fixed trusted host: never follow a redirect off it
         signal: AbortSignal.timeout(8000),
       });
       return r.text();

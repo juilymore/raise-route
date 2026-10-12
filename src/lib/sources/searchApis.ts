@@ -18,28 +18,36 @@ export function exaRequestBody(query: string, startPublishedDate: string, numRes
   return { query, type: "auto", numResults, startPublishedDate };
 }
 
-export async function searchTavily(query: string, apiKey: string | undefined, post: Post = defaultPost): Promise<Candidate[]> {
-  if (!apiKey) return [];
+/** SKIPPED means "not configured" (no key): the channel contributed NOTHING and must be reported as unavailable, never as "no results". */
+export interface SearchChannelResult {
+  status: "OK" | "SKIPPED_NO_KEY";
+  candidates: Candidate[];
+}
+
+export async function searchTavily(query: string, apiKey: string | undefined, post: Post = defaultPost): Promise<SearchChannelResult> {
+  if (!apiKey) return { status: "SKIPPED_NO_KEY", candidates: [] };
   const r = await post("https://api.tavily.com/search", {
     headers: { "content-type": "application/json", authorization: `Bearer ${apiKey}` },
     body: JSON.stringify(tavilyRequestBody(query)),
   });
   if (!r.ok) throw new Error(`tavily HTTP ${r.status}`);
   const j = (await r.json()) as { results?: Array<{ url?: string; title?: string; published_date?: string; content?: string }> };
-  return (j.results ?? [])
+  const candidates = (j.results ?? [])
     .map((x) => (x.url ? toCandidate({ url: x.url, channel: "search_api", title: x.title, publishedHint: x.published_date ?? null, sourceName: "tavily", snippet: x.content?.slice(0, 300) }) : null))
     .filter((c): c is Candidate => c !== null);
+  return { status: "OK", candidates };
 }
 
-export async function searchExa(query: string, windowStart: string, apiKey: string | undefined, post: Post = defaultPost): Promise<Candidate[]> {
-  if (!apiKey) return [];
+export async function searchExa(query: string, windowStart: string, apiKey: string | undefined, post: Post = defaultPost): Promise<SearchChannelResult> {
+  if (!apiKey) return { status: "SKIPPED_NO_KEY", candidates: [] };
   const r = await post("https://api.exa.ai/search", {
     headers: { "content-type": "application/json", "x-api-key": apiKey },
     body: JSON.stringify(exaRequestBody(query, `${windowStart}T00:00:00.000Z`)),
   });
   if (!r.ok) throw new Error(`exa HTTP ${r.status}`);
   const j = (await r.json()) as { results?: Array<{ url?: string; title?: string; publishedDate?: string }> };
-  return (j.results ?? [])
+  const candidates = (j.results ?? [])
     .map((x) => (x.url ? toCandidate({ url: x.url, channel: "search_api", title: x.title, publishedHint: x.publishedDate ?? null, sourceName: "exa" }) : null))
     .filter((c): c is Candidate => c !== null);
+  return { status: "OK", candidates };
 }

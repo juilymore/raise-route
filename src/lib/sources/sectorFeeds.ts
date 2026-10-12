@@ -27,7 +27,7 @@ export function enabledSectorFeeds(cfg: SourcesConfig) {
   return cfg.sector_feeds_push_model.filter((f) => (f as { status?: string }).status !== "DISABLED");
 }
 
-export async function fetchSectorFeeds(fetcher: SafeFetcher, cfg: SourcesConfig): Promise<{ items: SectorItem[]; health: SectorFeedHealth[] }> {
+export async function fetchSectorFeeds(fetcher: SafeFetcher, cfg: SourcesConfig): Promise<{ items: SectorItem[]; health: SectorFeedHealth[]; okFeeds: number; allFailed: boolean }> {
   const items: SectorItem[] = [];
   const health: SectorFeedHealth[] = [];
   for (const f of enabledSectorFeeds(cfg)) {
@@ -44,7 +44,9 @@ export async function fetchSectorFeeds(fetcher: SafeFetcher, cfg: SourcesConfig)
       health.push({ name: f.name, url: f.url, ok: false, status: r.status, items: 0, newest: null, error: (e as Error).message });
     }
   }
-  return { items, health };
+  const okFeeds = health.filter((h) => h.ok).length;
+  // allFailed must be checked by the caller: an empty `items` list with allFailed=true is a FAILED channel, never "quiet".
+  return { items, health, okFeeds, allFailed: health.length === 0 || okFeeds === 0 };
 }
 
 /** Items whose title/summary mention a VC (ambiguous aliases need VC-context words nearby). */

@@ -171,12 +171,12 @@ describe("optional search APIs (raw results only)", () => {
   it("never asks for an LLM answer and is skipped without a key", async () => {
     expect(tavilyRequestBody("q").include_answer).toBe(false);
     expect(JSON.stringify(exaRequestBody("q", "2026-09-12"))).not.toMatch(/answer|summary|text/i);
-    expect(await searchTavily("q", undefined)).toEqual([]);
-    expect(await searchExa("q", "2026-09-12", undefined)).toEqual([]);
+    expect(await searchTavily("q", undefined)).toEqual({ status: "SKIPPED_NO_KEY", candidates: [] });
+    expect(await searchExa("q", "2026-09-12", undefined)).toEqual({ status: "SKIPPED_NO_KEY", candidates: [] });
   });
   it("maps raw results to candidates and surfaces HTTP errors", async () => {
     const ok = async () => ({ ok: true, status: 200, json: async () => ({ results: [{ url: "https://a.example.com/x?utm_source=z", title: "T", published_date: "2026-10-01", content: "c" }, { title: "no url" }] }) });
-    const c = await searchTavily("q", "key", ok);
+    const c = (await searchTavily("q", "key", ok)).candidates;
     expect(c).toHaveLength(1);
     expect(c[0]).toMatchObject({ channel: "search_api", canonicalUrl: "https://a.example.com/x", publishedHint: "2026-10-01" });
     await expect(searchExa("q", "2026-09-12", "key", async () => ({ ok: false, status: 401, json: async () => ({}) }))).rejects.toThrow(/401/);

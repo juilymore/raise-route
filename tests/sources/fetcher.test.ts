@@ -152,3 +152,39 @@ describe("robots.txt", () => {
     expect(requested.some((u) => u.includes("/secret/page"))).toBe(false);
   });
 });
+
+describe("audit hardening (P04 audit findings)", () => {
+  it("a result fetched with skipRobots is never served from cache to a caller that must honour robots.txt", async () => {
+    const { fetcher } = make({
+      "https://rb.example.com/robots.txt": () => new Response("User-agent: *\nDisallow: /", { status: 200 }),
+      "https://rb.example.com/a": () => new Response("secret page"),
+    });
+    expect((await fetcher.fetch("https://rb.example.com/a", { skipRobots: true })).ok).toBe(true);
+    expect(await fetcher.fetch("https://rb.example.com/a")).toMatchObject({ ok: false, errorCode: "ROBOTS_DISALLOWED" });
+  });
+  it("transient failures are not cached, so a retry in the same run can succeed", async () => {
+    let n = 0;
+    const { fetcher } = make({
+      "https://t.example.com/robots.txt": () => new Response("", { status: 404 }),
+      "https://t.example.com/a": () => (++n === 1 ? new Response("down", { status: 503 }) : new Response("ok now")),
+    });
+    expect((await fetcher.fetch("https://t.example.com/a")).status).toBe(503);
+    expect((await fetcher.fetch("https://t.example.com/a")).ok).toBe(true);
+  });
+  it("follows a redirect on robots.txt (RFC 9309) and honours the rules it finds", async () => {
+    const { fetcher } = make({
+      "https://rr.example.com/robots.txt": () => new Response(null, { status: 301, headers: { location: "https://rr.example.com/real-robots.txt" } }),
+      "https://rr.example.com/real-robots.txt": () => new Response("User-agent: *\nDisallow: /nope", { status: 200 }),
+      "https://rr.example.com/nope/x": () => new Response("x"),
+    });
+    expect(await fetcher.fetch("https://rr.example.com/nope/x")).toMatchObject({ ok: false, errorCode: "ROBOTS_DISALLOWED" });
+  });
+  it("a robots.txt redirect to a private address is blocked (treated as no rules, never fetched)", async () => {
+    const { fetcher, requested } = make({
+      "https://rp.example.com/robots.txt": () => new Response(null, { status: 302, headers: { location: "http://169.254.169.254/robots.txt" } }),
+      "https://rp.example.com/a": () => new Response("page"),
+    });
+    await fetcher.fetch("https://rp.example.com/a");
+    expect(requested.some((u) => u.includes("169.254"))).toBe(false);
+  });
+});
