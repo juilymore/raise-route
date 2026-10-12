@@ -16,7 +16,8 @@
     "db:test": "node scripts/db-test.mjs",
     "db:migrate": "node scripts/db-migrate.mjs --seed",
     "db:seed": "node scripts/db-migrate.mjs --seed-only",
-    "db:app-role": "node scripts/db-setup-app-role.mjs"
+    "db:app-role": "node scripts/db-setup-app-role.mjs",
+    "smoke:sources": "tsx scripts/smoke-sources.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.2.0",

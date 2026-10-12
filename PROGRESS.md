@@ -9,7 +9,7 @@ approval between phases, only ask when something is overcomplicated; P10-P13 are
 | P01 foundation | done, audited |
 | P02 Neon + seed + /pipeline | done, audited (db:test 30/30) |
 | P03 pure engine | done, 30/30 golden vectors; audit fixes applied (108 tests green) |
-| P04 sources + fetcher | IN PROGRESS: src/lib/sources/{types,fetcher,extract}.ts written; still to do: feeds, googleNews (decoder verified live), discovery, sectorFeeds, searchApis, candidates, scripts/smoke-sources.ts, fixtures, tests |
+| P04 sources + fetcher | code + tests done (33 source tests); smoke test run live; needs audit, then P05 |
 | P05..P09 | not started |
 
 To resume: tell Claude "resume from PROGRESS.md". Run `npm run verify` first.
