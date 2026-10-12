@@ -1,4 +1,5 @@
 import { getEnv, requireEnv } from "@/lib/env";
+import { createOpenRouterTransport } from "./openrouter";
 import { GeminiClient, createSdkTransport, type LedgerRow, type Transport } from "./client";
 
 export * from "./client";
@@ -8,7 +9,7 @@ export * from "./tasks";
 /** Build the per-run client from env. `ledger` defaults to the llm_calls table through pipelineDb (the only DB surface pipeline code may use). */
 export async function createGeminiFromEnv(opts: { transport?: Transport; ledger?: (row: LedgerRow) => Promise<void>; models?: string[] } = {}): Promise<GeminiClient> {
   const env = getEnv();
-  const transport = opts.transport ?? createSdkTransport(requireEnv("GEMINI_API_KEY"));
+  const transport = opts.transport ?? (env.OPENROUTER_API_KEY ? createOpenRouterTransport(env.OPENROUTER_API_KEY) : createSdkTransport(requireEnv("GEMINI_API_KEY")));
   let ledger = opts.ledger;
   if (!ledger) {
     const { pipelineDb } = await import("@/lib/db/pipelineDb");

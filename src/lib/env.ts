@@ -10,6 +10,8 @@ const int = (def: number) => z.coerce.number().int().positive().default(def);
 
 const schema = z.object({
   GEMINI_API_KEY: z.string().min(1).optional(),
+  /** When set, the same Gemini models are called through OpenRouter instead of the Google SDK (no search grounding). */
+  OPENROUTER_API_KEY: z.string().min(1).optional(),
   GEMINI_MODEL_PRIMARY: z.string().startsWith("gemini-").default("gemini-3.8-flash"),
   GEMINI_MODEL_FALLBACKS: z
     .string()
@@ -61,7 +63,7 @@ export function requireEnv<K extends keyof Env>(key: K): NonNullable<Env[K]> {
 /** For /api/health: which secrets are present. Booleans only, never values. */
 export function envPresence(env: Env = getEnv()) {
   const keys = [
-    "GEMINI_API_KEY", "DATABASE_URL", "DATABASE_URL_UNPOOLED", "FOUNDER_ACCESS_CODE",
+    "GEMINI_API_KEY", "OPENROUTER_API_KEY", "DATABASE_URL", "DATABASE_URL_UNPOOLED", "FOUNDER_ACCESS_CODE",
     "SESSION_SECRET", "CRON_SECRET", "RESEND_API_KEY", "TAVILY_API_KEY", "EXA_API_KEY",
   ] as const;
   return Object.fromEntries(keys.map((k) => [k, env[k] !== undefined]));

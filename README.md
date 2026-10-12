@@ -60,6 +60,7 @@ npm run scan:secrets              # greps the build output and tracked files for
 | `DATABASE_URL` | Neon pooled connection string for the restricted role `app_service` |
 | `DATABASE_URL_UNPOOLED` | Neon owner connection string (migrations and tests only) |
 | `GEMINI_API_KEY`, `GEMINI_MODEL_PRIMARY`, `GEMINI_MODEL_FALLBACKS` | Gemini Flash (default `gemini-3.8-flash`, fallbacks `gemini-3.6-flash,gemini-3.7-flash`) |
+| `OPENROUTER_API_KEY` | When set, the same Gemini Flash models are called through OpenRouter (`google/gemini-*`) instead of the Google SDK. Search grounding is unavailable on this path, so set `GEMINI_ENABLE_GROUNDING=false` |
 | `FOUNDER_ACCESS_CODE`, `SESSION_SECRET` | Not used any more (login was removed); can be deleted |
 | `CRON_SECRET` | Bearer secret for `/api/cron/run` and `/api/pipeline/continue` |
 | `PIPELINE_TIME_BUDGET_MS`, `LLM_MAX_CALLS_PER_RUN`, `MANUAL_RUN_COOLDOWN_MINUTES` | Run limits |

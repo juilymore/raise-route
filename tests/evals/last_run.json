@@ -1,6 +1,6 @@
 {
-  "ranAt": "2026-10-12T09:28:05.630Z",
-  "models": "gemini-3.8-flash",
+  "ranAt": "2026-10-12T14:24:32.543Z",
+  "models": "gemini-3.7-flash",
   "results": [
     {
       "id": "C01_clear_lead_investment",
@@ -83,13 +83,11 @@
           "vc_role": "participating_investor",
           "signal_type": "investment",
           "relevance_tier": "b2b_saas",
-          "event_date": null,
+          "event_date": "2026-10-08",
           "subject_entity": "LedgerLy",
-          "evidence_excerpt": "Fintech startup LedgerLy raised $12 million in a Series A. The round saw participation from a dozen investors including Accel, Peak XV Partners, Elevation Capital, Blume Ventures, Nexus Venture Partners",
+          "evidence_excerpt": "The round saw participation from a dozen investors including Accel, Peak XV Partners, Elevation Capital, Blume Ventures, Nexus Venture Partners, Stellaris Venture Partners, Chiratae Ventures, India Quotient, Kalaari Capital, 3one4 Capital, Speciale Invest and Info Edge Ventures.",
           "commitment": "reported",
-          "uncertainties": [
-            "Exact event date not stated; only roundup publication date mentioned."
-          ]
+          "uncertainties": []
         }
       ]
     },
@@ -134,8 +132,8 @@
           "signal_type": "blog_post",
           "relevance_tier": "direct",
           "event_date": "2026-10-02",
-          "subject_entity": "Blume Ventures",
-          "evidence_excerpt": "Published 2 October 2026 on the Blume Ventures blog. For a decade, logistics operators in India ran on phone calls, WhatsApp groups and spreadsheets. In this essay we argue that three shifts - cheap GPS telematics, API-first transport management systems and a generation of ops managers who expect",
+          "subject_entity": "supply chain software",
+          "evidence_excerpt": "Why supply chain software is finally having its moment. Published 2 October 2026 on the Blume Ventures blog. For a decade, logistics operators in India ran on phone calls, WhatsApp groups and spreadsheets.",
           "commitment": "confirmed",
           "uncertainties": []
         }
@@ -170,7 +168,7 @@
           "relevance_tier": "broad",
           "event_date": "2026-10-09",
           "subject_entity": "NeuraCore",
-          "evidence_excerpt": "The round was led by Blume Ventures, which invested alongside two semiconductor-focused funds.",
+          "evidence_excerpt": "NeuraCore, a designer of low-power AI accelerator chips for data centres, closed a $30 million Series A. The round was led by Blume Ventures, which invested alongside two semiconductor-focused funds.",
           "commitment": "confirmed",
           "uncertainties": []
         }
@@ -202,7 +200,7 @@
           "relevance_tier": "direct",
           "event_date": "2023-03-14",
           "subject_entity": "CargoLink",
-          "evidence_excerpt": "CargoLink, a freight marketplace connecting shippers with truckers, announced a $4 million seed round led by Blume Ventures.",
+          "evidence_excerpt": "March 14, 2023 - CargoLink, a freight marketplace connecting shippers with truckers, announced a $4 million seed round led by Blume Ventures.",
           "commitment": "confirmed",
           "uncertainties": []
         }
@@ -284,10 +282,8 @@
           "event_date": null,
           "subject_entity": "HaulBridge",
           "evidence_excerpt": "HaulBridge, a freight brokerage software company, has received investment from Blume Ventures according to a statement on its website.",
-          "commitment": "confirmed",
-          "uncertainties": [
-            "Funding round details and specific investment date are not stated."
-          ]
+          "commitment": "reported",
+          "uncertainties": []
         }
       ]
     },
@@ -295,7 +291,7 @@
       "id": "C08_rumor",
       "negative": true,
       "events": 1,
-      "activityEvents": 1,
+      "activityEvents": 0,
       "checks": [
         {
           "name": "commitment in [\"rumor\",\"discussion\"]",
@@ -305,12 +301,14 @@
       ],
       "quoteTotal": 1,
       "quoteFound": 1,
-      "action": "MONITOR",
-      "reason": "GATE_CAPPED",
-      "rejected": [],
+      "action": "DONT_PRIORITIZE",
+      "reason": "QUIET",
+      "rejected": [
+        "d1:NOT_ATTRIBUTABLE"
+      ],
       "eventsDetail": [
         {
-          "vc_role": "lead_investor",
+          "vc_role": "unknown",
           "signal_type": "investment",
           "relevance_tier": "direct",
           "event_date": "2026-10-10",
@@ -318,8 +316,7 @@
           "evidence_excerpt": "Fleet management startup FleetMint is rumoured to be in early talks with Blume Ventures for a possible $8 million round, according to people familiar with the matter who asked not to be named.",
           "commitment": "rumor",
           "uncertainties": [
-            "Unconfirmed discussions/rumour based on anonymous sources",
-            "Exact role (lead vs participating) not formally verified"
+            "The investment round and talks are unconfirmed and reported as a rumor."
           ]
         }
       ]
@@ -367,7 +364,7 @@
           "relevance_tier": "direct",
           "event_date": "2026-10-07",
           "subject_entity": "Blume Ventures",
-          "evidence_excerpt": "Karthik Reddy of Blume Ventures on backing freight tech in India. In this conversation, Karthik Reddy, a partner at Blume Ventures, explains how he evaluates logistics software founders, why proof-of-delivery data is an underrated moat and what he looks for in a Seed pitch for B2B supply chain SaaS.",
+          "evidence_excerpt": "Episode 112, published 7 October 2026: Karthik Reddy of Blume Ventures on backing freight tech in India. In this conversation, Karthik Reddy, a partner at Blume Ventures, explains how he evaluates logistics software founders, why proof-of-delivery data is an underrated moat",
           "commitment": "confirmed",
           "uncertainties": []
         }
@@ -422,7 +419,7 @@
           "relevance_tier": "none",
           "event_date": "2026-10-09",
           "subject_entity": null,
-          "evidence_excerpt": "Market notes, 9 October 2026: Blume Ventures was mentioned in passing by a commentator at a panel on consumer apps. No investment, essay or appearance by the firm was reported. The panel focused on social commerce trends and creator tools.",
+          "evidence_excerpt": "Blume Ventures was mentioned in passing by a commentator at a panel on consumer apps. No investment, essay or appearance by the firm was reported.",
           "commitment": "not_applicable",
           "uncertainties": [
             "document contains instructions"
@@ -450,11 +447,9 @@
           "relevance_tier": "direct",
           "event_date": null,
           "subject_entity": "TransLog",
-          "evidence_excerpt": "Angeführt wurde die Runde von mehreren europäischen Investoren, darunter auch Blume Ventures aus Indien.",
+          "evidence_excerpt": "Angeführt wurde die Runde von mehreren europäischen Investoren, darunter auch Blume Ventures aus Indien. Das Unternehmen will mit dem Geld seine Software für die Disposition von Lkw-Flotten weiterentwickeln",
           "commitment": "confirmed",
-          "uncertainties": [
-            "Exact event date not explicitly stated in document"
-          ]
+          "uncertainties": []
         }
       ]
     },
@@ -481,14 +476,13 @@
         {
           "vc_role": "unknown",
           "signal_type": "investment",
-          "relevance_tier": "broad",
+          "relevance_tier": "none",
           "event_date": null,
           "subject_entity": null,
-          "evidence_excerpt": "Blume Ventures backs ... Sign in or start your free trial to read the full story.",
+          "evidence_excerpt": "Blume Ventures backs ...",
           "commitment": "reported",
           "uncertainties": [
-            "Paywalled content cuts off the recipient of the backing and full context.",
-            "Specific role, investment round, and date are not stated."
+            "Paywalled article snippet is truncated; backed entity, round details, and event date are not stated."
           ]
         }
       ]
@@ -583,8 +577,8 @@
   ],
   "stats": {
     "llm_calls": 15,
-    "llm_tokens_in": 9722,
-    "llm_tokens_out": 3887,
+    "llm_tokens_in": 22112,
+    "llm_tokens_out": 5109,
     "search_calls": 0,
     "cap": 200
   },
