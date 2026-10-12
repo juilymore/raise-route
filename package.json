@@ -20,7 +20,8 @@
     "smoke:sources": "tsx scripts/smoke-sources.ts",
     "evals": "tsx --conditions=react-server scripts/run-evals.ts",
     "pipeline:run": "tsx --conditions=react-server scripts/run-pipeline.ts",
-    "inspect:run": "node scripts/inspect-run.mjs"
+    "inspect:run": "node scripts/inspect-run.mjs",
+    "scan:secrets": "node scripts/scan-build-secrets.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.28.0",

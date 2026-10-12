@@ -23,7 +23,7 @@ source, and **never touches the founder's notes or contact history**.
 | **Quiet vs. failed** | "Quiet" needs adequate source coverage. If a source failed, the investor is **Incomplete**, never quiet. |
 
 ## Pages
-`/` Command Centre · `/pipeline` table + board with filters and CSV · `/vc/[slug]` score breakdown, evidence, relationship, history · `/runs`, `/runs/[id]` run audit (rejected evidence, source health, AI ledger, integrity receipt) · `/settings`. Public visitors are read-only; the founder passcode unlocks **Run now**, editing notes/status/dates and the company profile.
+`/` Command Centre (with a collapsed Opportunity Matrix) · `/pipeline` table + board with filters, CSV and "view as of an earlier run" · `/vc/[slug]` score breakdown, evidence, relationship, history, Gemini outreach draft, feedback and outcomes · `/runs`, `/runs/[id]` run audit (rejected evidence, source health, AI ledger, integrity receipt) · `/digests` immutable email archive · `/calibration` feedback and outcomes with sample sizes · `/settings` · `/components-map` · `/data-honesty`. Public visitors are read-only; the founder passcode unlocks **Run now**, editing notes/status/dates and the company profile.
 
 ## Architecture
 ```
@@ -53,6 +53,7 @@ npm run dev                       # http://localhost:3000
 npm run pipeline:run              # run the real pipeline from the command line (or press Run now in the app)
 npm run verify                    # typecheck + lint + tests + compliance script
 npm run evals                     # real Gemini extraction evals (15 labelled cases)
+npm run scan:secrets              # greps the build output and tracked files for the values of your secrets
 ```
 | Variable | Purpose |
 |---|---|
@@ -62,7 +63,7 @@ npm run evals                     # real Gemini extraction evals (15 labelled ca
 | `FOUNDER_ACCESS_CODE`, `SESSION_SECRET` | Founder login (passcode, cookie signing secret) |
 | `CRON_SECRET` | Bearer secret for `/api/cron/run` and `/api/pipeline/continue` |
 | `PIPELINE_TIME_BUDGET_MS`, `LLM_MAX_CALLS_PER_RUN`, `MANUAL_RUN_COOLDOWN_MINUTES` | Run limits |
-| `RESEND_API_KEY`, `DIGEST_RECIPIENT` | Email digest (later phase) |
+| `RESEND_API_KEY`, `DIGEST_RECIPIENT`, `DIGEST_FROM`, `DIGEST_AUTO_SEND` | Email digest through Resend (auto-send only after cron runs when true; manual runs never auto-send) |
 
 ## Tests
 `npm test` runs 190+ tests: 30 golden scoring/action vectors, engine and validator units (including SSRF payloads, date edge cases, quote verification, entity collisions), source parsers and fetcher guards, the Gemini wrapper (retries, fallback, cap, repair), the orchestrator with fakes (idempotency, resume, failure isolation), founder auth, and live-database integration tests. `npm run evals` makes real Gemini calls on 15 hand-labelled documents (including a prompt-injection canary).
