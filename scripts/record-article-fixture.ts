@@ -17,7 +17,7 @@ for (const c of candidates) {
   const a = extractArticle(r.body);
   if (a.text.length < 400) continue;
   mkdirSync("fixtures/articles", { recursive: true });
-  writeFileSync("fixtures/articles/news_article_sample.html", r.body.slice(0, 70_000));
+  writeFileSync("fixtures/articles/news_article_sample.html", r.body.slice(0, 400_000));
   writeFileSync("fixtures/articles/news_article_sample.meta.json", JSON.stringify({ url: c.url, fetchedAt: new Date().toISOString(), extractedChars: a.text.length, dates: a.dates }, null, 2));
   console.log("recorded", c.url, "chars", a.text.length, JSON.stringify(a.dates));
   break;
