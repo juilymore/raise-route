@@ -1,0 +1,161 @@
+{
+  "version": "v1.0.0",
+  "_comment": "ALL weights/thresholds live here. No magic numbers in code. Changing any value => bump version. The TS engine MUST reproduce config/golden_vectors.json exactly.",
+  "window_days": 30,
+  "future_date_tolerance_days": 1,
+  "max_points": {
+    "relevance": 30,
+    "recency": 20,
+    "strength": 20,
+    "corroboration": 10,
+    "evidence_quality": 10,
+    "fund_fit": 10
+  },
+  "relevance_tier_weight": {
+    "direct": 1.0,
+    "adjacent": 0.6,
+    "b2b_saas": 0.4,
+    "broad": 0.15,
+    "none": 0.0
+  },
+  "recency": {
+    "mode": "linear",
+    "min_points_if_in_window": 1
+  },
+  "strength": {
+    "base_by_signal_type": {
+      "investment": 20,
+      "portfolio_activity": 18,
+      "thesis_update": 15,
+      "fund_news": 14,
+      "blog_post": 13,
+      "interview": 12,
+      "podcast": 12,
+      "conference": 12,
+      "team_news": 8,
+      "news_mention": 8,
+      "other": 5
+    },
+    "multiplier_by_relevance_tier": {
+      "direct": 1.0,
+      "adjacent": 1.0,
+      "b2b_saas": 0.8,
+      "broad": 0.5,
+      "none": 0.0
+    },
+    "commitment_types": [
+      "investment",
+      "portfolio_activity"
+    ],
+    "commitment_multiplier": {
+      "confirmed": 1.0,
+      "reported": 0.8,
+      "rumor": 0.4,
+      "discussion": 1.0
+    }
+  },
+  "corroboration": {
+    "counts_tiers": [
+      "direct",
+      "adjacent"
+    ],
+    "per_additional_independent_event": 4,
+    "max_from_events": 8,
+    "bonus_if_top_event_has_2plus_independent_sources": 2
+  },
+  "evidence_quality": {
+    "source_type_points": {
+      "official_site": 4,
+      "official_blog": 4,
+      "portfolio_announcement": 4,
+      "reputable_news": 3,
+      "event_page": 3,
+      "podcast": 3,
+      "video": 3,
+      "trade_press": 2,
+      "social": 1,
+      "other": 1
+    },
+    "date_basis_points": {
+      "structured_metadata": 3,
+      "published_date": 2,
+      "explicit_in_text": 2,
+      "first_observed": 1
+    },
+    "excerpt_verified_points": 2,
+    "url_ok_points": 1,
+    "synthetic_cap": 3
+  },
+  "fund_fit": {
+    "stage_points": {
+      "PRESEED_SEED": 4,
+      "SEED_EARLY": 4,
+      "MULTI_STAGE": 3,
+      "ACCELERATOR": 2,
+      "EARLY_GROWTH": 1,
+      "GROWTH": 0,
+      "UNKNOWN": 2
+    },
+    "sector_points": {
+      "logistics": 4,
+      "supply_chain": 4,
+      "industrial": 3,
+      "mobility": 3,
+      "proptech": 3,
+      "b2b_saas": 3,
+      "enterprise_software": 3,
+      "deeptech": 1,
+      "marketplaces": 1,
+      "fintech": 1,
+      "generalist": 1,
+      "consumer": 0
+    },
+    "sector_unknown_points": 2,
+    "geo_points": {
+      "match_or_global": 2,
+      "company_unknown": 1,
+      "mismatch": 0
+    }
+  },
+  "actions": {
+    "reach_out_now_min_score": 60,
+    "follow_up_now_min_score": 50,
+    "monitor_min_score": 35,
+    "waiting_cooldown_days": 7,
+    "overdue_follow_up_days": 14,
+    "gate_tiers": [
+      "direct",
+      "adjacent"
+    ],
+    "gate_min_stage_points": 1,
+    "gate_require_excerpt_verified": true,
+    "synthetic_signals_cap_action_at": "MONITOR",
+    "monitor_requires_tiers": [
+      "direct",
+      "adjacent",
+      "b2b_saas"
+    ],
+    "gate_disallow_commitments": [
+      "rumor"
+    ],
+    "reach_out_max_signal_age_days": 21
+  },
+  "language": {
+    "quiet": "No qualifying signal found in the sources checked in the past 30 days.",
+    "incomplete": "Assessment incomplete: one or more sources could not be checked. This is not evidence of inactivity."
+  },
+  "relevance_damping": {
+    "_comment": "Recency and evidence-quality points are multiplied by this per relevance tier, so fresh+well-sourced but IRRELEVANT activity cannot look like an opportunity.",
+    "applies_to": [
+      "recency",
+      "evidence_quality"
+    ],
+    "by_tier": {
+      "direct": 1.0,
+      "adjacent": 1.0,
+      "b2b_saas": 0.75,
+      "broad": 0.35,
+      "none": 0.0
+    }
+  }
+}

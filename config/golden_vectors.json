@@ -1,0 +1,1671 @@
+{
+  "scoring_version": "v1.0.0",
+  "today": "2026-10-12",
+  "vectors": [
+    {
+      "name": "V01 quiet fund, no signals, to-reach-out",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [],
+        "fund": {
+          "stage_focus": "PRESEED_SEED",
+          "sector_tags": [
+            "mobility",
+            "logistics",
+            "supply_chain"
+          ],
+          "hq_region": "US"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "TO_REACH_OUT",
+          "last_contact_date": null,
+          "reconnect_after": null
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 0,
+        "follow_up_score": null,
+        "fit": {
+          "stage": 4,
+          "sector": 4,
+          "geo": 1,
+          "total": 9
+        },
+        "breakdown": null,
+        "last_signal_date": null,
+        "action": "DONT_PRIORITIZE",
+        "hold_reason": null,
+        "reason_code": "QUIET"
+      }
+    },
+    {
+      "name": "V02 strong direct investment 5d, to-reach-out",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [
+          {
+            "id": "s_strong",
+            "event_date": "2026-10-07",
+            "signal_type": "investment",
+            "relevance_tier": "direct",
+            "commitment": "confirmed",
+            "source_type": "portfolio_announcement",
+            "date_basis": "structured_metadata",
+            "excerpt_verified": true,
+            "is_synthetic": false,
+            "independent_source_count": 1,
+            "url_ok": true
+          }
+        ],
+        "fund": {
+          "stage_focus": "PRESEED_SEED",
+          "sector_tags": [
+            "mobility",
+            "logistics",
+            "supply_chain"
+          ],
+          "hq_region": "US"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "TO_REACH_OUT",
+          "last_contact_date": null,
+          "reconnect_after": null
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 1,
+        "follow_up_score": 86,
+        "fit": {
+          "stage": 4,
+          "sector": 4,
+          "geo": 1,
+          "total": 9
+        },
+        "breakdown": {
+          "relevance": 30,
+          "recency": 17,
+          "strength": 20,
+          "corroboration": 0,
+          "evidence_quality": 10,
+          "fund_fit": 9
+        },
+        "last_signal_date": "2026-10-07",
+        "action": "REACH_OUT_NOW",
+        "hold_reason": null,
+        "reason_code": "STRONG_RELEVANT_SIGNAL"
+      }
+    },
+    {
+      "name": "V03 same, waiting 3 days (cooldown)",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [
+          {
+            "id": "s_strong",
+            "event_date": "2026-10-07",
+            "signal_type": "investment",
+            "relevance_tier": "direct",
+            "commitment": "confirmed",
+            "source_type": "portfolio_announcement",
+            "date_basis": "structured_metadata",
+            "excerpt_verified": true,
+            "is_synthetic": false,
+            "independent_source_count": 1,
+            "url_ok": true
+          }
+        ],
+        "fund": {
+          "stage_focus": "PRESEED_SEED",
+          "sector_tags": [
+            "mobility",
+            "logistics",
+            "supply_chain"
+          ],
+          "hq_region": "US"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "WAITING_FOR_RESPONSE",
+          "last_contact_date": "2026-10-09",
+          "reconnect_after": null
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 1,
+        "follow_up_score": 86,
+        "fit": {
+          "stage": 4,
+          "sector": 4,
+          "geo": 1,
+          "total": 9
+        },
+        "breakdown": {
+          "relevance": 30,
+          "recency": 17,
+          "strength": 20,
+          "corroboration": 0,
+          "evidence_quality": 10,
+          "fund_fit": 9
+        },
+        "last_signal_date": "2026-10-07",
+        "action": "HOLD",
+        "hold_reason": "RECENT_CONTACT",
+        "reason_code": "RECENT_CONTACT"
+      }
+    },
+    {
+      "name": "V04 same, waiting 18d, hook newer than contact",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [
+          {
+            "id": "s_strong",
+            "event_date": "2026-10-07",
+            "signal_type": "investment",
+            "relevance_tier": "direct",
+            "commitment": "confirmed",
+            "source_type": "portfolio_announcement",
+            "date_basis": "structured_metadata",
+            "excerpt_verified": true,
+            "is_synthetic": false,
+            "independent_source_count": 1,
+            "url_ok": true
+          }
+        ],
+        "fund": {
+          "stage_focus": "PRESEED_SEED",
+          "sector_tags": [
+            "mobility",
+            "logistics",
+            "supply_chain"
+          ],
+          "hq_region": "US"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "WAITING_FOR_RESPONSE",
+          "last_contact_date": "2026-09-24",
+          "reconnect_after": null
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 1,
+        "follow_up_score": 86,
+        "fit": {
+          "stage": 4,
+          "sector": 4,
+          "geo": 1,
+          "total": 9
+        },
+        "breakdown": {
+          "relevance": 30,
+          "recency": 17,
+          "strength": 20,
+          "corroboration": 0,
+          "evidence_quality": 10,
+          "fund_fit": 9
+        },
+        "last_signal_date": "2026-10-07",
+        "action": "FOLLOW_UP_NOW",
+        "hold_reason": null,
+        "reason_code": "NEW_HOOK_SINCE_CONTACT"
+      }
+    },
+    {
+      "name": "V05 same, reconnect_after in future",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [
+          {
+            "id": "s_strong",
+            "event_date": "2026-10-07",
+            "signal_type": "investment",
+            "relevance_tier": "direct",
+            "commitment": "confirmed",
+            "source_type": "portfolio_announcement",
+            "date_basis": "structured_metadata",
+            "excerpt_verified": true,
+            "is_synthetic": false,
+            "independent_source_count": 1,
+            "url_ok": true
+          }
+        ],
+        "fund": {
+          "stage_focus": "PRESEED_SEED",
+          "sector_tags": [
+            "mobility",
+            "logistics",
+            "supply_chain"
+          ],
+          "hq_region": "US"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "TO_REACH_OUT",
+          "last_contact_date": null,
+          "reconnect_after": "2026-11-01"
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 1,
+        "follow_up_score": 86,
+        "fit": {
+          "stage": 4,
+          "sector": 4,
+          "geo": 1,
+          "total": 9
+        },
+        "breakdown": {
+          "relevance": 30,
+          "recency": 17,
+          "strength": 20,
+          "corroboration": 0,
+          "evidence_quality": 10,
+          "fund_fit": 9
+        },
+        "last_signal_date": "2026-10-07",
+        "action": "HOLD",
+        "hold_reason": "RECONNECT_DATE",
+        "reason_code": "RECONNECT_DATE"
+      }
+    },
+    {
+      "name": "V06 same, active conversation",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [
+          {
+            "id": "s_strong",
+            "event_date": "2026-10-07",
+            "signal_type": "investment",
+            "relevance_tier": "direct",
+            "commitment": "confirmed",
+            "source_type": "portfolio_announcement",
+            "date_basis": "structured_metadata",
+            "excerpt_verified": true,
+            "is_synthetic": false,
+            "independent_source_count": 1,
+            "url_ok": true
+          }
+        ],
+        "fund": {
+          "stage_focus": "PRESEED_SEED",
+          "sector_tags": [
+            "mobility",
+            "logistics",
+            "supply_chain"
+          ],
+          "hq_region": "US"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "IN_CONVERSATION",
+          "last_contact_date": "2026-10-08",
+          "reconnect_after": null
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 1,
+        "follow_up_score": 86,
+        "fit": {
+          "stage": 4,
+          "sector": 4,
+          "geo": 1,
+          "total": 9
+        },
+        "breakdown": {
+          "relevance": 30,
+          "recency": 17,
+          "strength": 20,
+          "corroboration": 0,
+          "evidence_quality": 10,
+          "fund_fit": 9
+        },
+        "last_signal_date": "2026-10-07",
+        "action": "HOLD",
+        "hold_reason": "ACTIVE_CONVERSATION",
+        "reason_code": "ACTIVE_CONVERSATION_WITH_HOOK"
+      }
+    },
+    {
+      "name": "V07 same, passed, no reconnect date",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [
+          {
+            "id": "s_strong",
+            "event_date": "2026-10-07",
+            "signal_type": "investment",
+            "relevance_tier": "direct",
+            "commitment": "confirmed",
+            "source_type": "portfolio_announcement",
+            "date_basis": "structured_metadata",
+            "excerpt_verified": true,
+            "is_synthetic": false,
+            "independent_source_count": 1,
+            "url_ok": true
+          }
+        ],
+        "fund": {
+          "stage_focus": "PRESEED_SEED",
+          "sector_tags": [
+            "mobility",
+            "logistics",
+            "supply_chain"
+          ],
+          "hq_region": "US"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "PASSED",
+          "last_contact_date": "2026-09-02",
+          "reconnect_after": null
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 1,
+        "follow_up_score": 86,
+        "fit": {
+          "stage": 4,
+          "sector": 4,
+          "geo": 1,
+          "total": 9
+        },
+        "breakdown": {
+          "relevance": 30,
+          "recency": 17,
+          "strength": 20,
+          "corroboration": 0,
+          "evidence_quality": 10,
+          "fund_fit": 9
+        },
+        "last_signal_date": "2026-10-07",
+        "action": "DONT_PRIORITIZE",
+        "hold_reason": null,
+        "reason_code": "PASSED"
+      }
+    },
+    {
+      "name": "V08 same, growth-stage fund (stage gate)",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [
+          {
+            "id": "s_strong",
+            "event_date": "2026-10-07",
+            "signal_type": "investment",
+            "relevance_tier": "direct",
+            "commitment": "confirmed",
+            "source_type": "portfolio_announcement",
+            "date_basis": "structured_metadata",
+            "excerpt_verified": true,
+            "is_synthetic": false,
+            "independent_source_count": 1,
+            "url_ok": true
+          }
+        ],
+        "fund": {
+          "stage_focus": "GROWTH",
+          "sector_tags": [
+            "generalist"
+          ],
+          "hq_region": "Global"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "TO_REACH_OUT",
+          "last_contact_date": null,
+          "reconnect_after": null
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 1,
+        "follow_up_score": 79,
+        "fit": {
+          "stage": 0,
+          "sector": 1,
+          "geo": 1,
+          "total": 2
+        },
+        "breakdown": {
+          "relevance": 30,
+          "recency": 17,
+          "strength": 20,
+          "corroboration": 0,
+          "evidence_quality": 10,
+          "fund_fit": 2
+        },
+        "last_signal_date": "2026-10-07",
+        "action": "MONITOR",
+        "hold_reason": null,
+        "reason_code": "GATE_CAPPED"
+      }
+    },
+    {
+      "name": "V09 broad generic blog 2d (AI chips-type)",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [
+          {
+            "id": "s_broad",
+            "event_date": "2026-10-10",
+            "signal_type": "blog_post",
+            "relevance_tier": "broad",
+            "commitment": "confirmed",
+            "source_type": "official_blog",
+            "date_basis": "structured_metadata",
+            "excerpt_verified": true,
+            "is_synthetic": false,
+            "independent_source_count": 1,
+            "url_ok": true
+          }
+        ],
+        "fund": {
+          "stage_focus": "SEED_EARLY",
+          "sector_tags": [
+            "generalist",
+            "b2b_saas"
+          ],
+          "hq_region": "India"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "TO_REACH_OUT",
+          "last_contact_date": null,
+          "reconnect_after": null
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 1,
+        "follow_up_score": 31,
+        "fit": {
+          "stage": 4,
+          "sector": 3,
+          "geo": 1,
+          "total": 8
+        },
+        "breakdown": {
+          "relevance": 5,
+          "recency": 7,
+          "strength": 7,
+          "corroboration": 0,
+          "evidence_quality": 4,
+          "fund_fit": 8
+        },
+        "last_signal_date": "2026-10-10",
+        "action": "DONT_PRIORITIZE",
+        "hold_reason": null,
+        "reason_code": "GENERIC_ACTIVITY_NOT_RELEVANT"
+      }
+    },
+    {
+      "name": "V10 adjacent trade-press mention 20d",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [
+          {
+            "id": "s_adj",
+            "event_date": "2026-09-22",
+            "signal_type": "news_mention",
+            "relevance_tier": "adjacent",
+            "commitment": "confirmed",
+            "source_type": "trade_press",
+            "date_basis": "published_date",
+            "excerpt_verified": true,
+            "is_synthetic": false,
+            "independent_source_count": 1,
+            "url_ok": true
+          }
+        ],
+        "fund": {
+          "stage_focus": "SEED_EARLY",
+          "sector_tags": [
+            "generalist",
+            "b2b_saas"
+          ],
+          "hq_region": "India"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "TO_REACH_OUT",
+          "last_contact_date": null,
+          "reconnect_after": null
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 1,
+        "follow_up_score": 48,
+        "fit": {
+          "stage": 4,
+          "sector": 3,
+          "geo": 1,
+          "total": 8
+        },
+        "breakdown": {
+          "relevance": 18,
+          "recency": 7,
+          "strength": 8,
+          "corroboration": 0,
+          "evidence_quality": 7,
+          "fund_fit": 8
+        },
+        "last_signal_date": "2026-09-22",
+        "action": "MONITOR",
+        "hold_reason": null,
+        "reason_code": "MODERATE_SIGNAL"
+      }
+    },
+    {
+      "name": "V11 direct event 31d old => out of window",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [
+          {
+            "id": "s_old",
+            "event_date": "2026-09-11",
+            "signal_type": "investment",
+            "relevance_tier": "direct",
+            "commitment": "confirmed",
+            "source_type": "portfolio_announcement",
+            "date_basis": "structured_metadata",
+            "excerpt_verified": true,
+            "is_synthetic": false,
+            "independent_source_count": 1,
+            "url_ok": true
+          }
+        ],
+        "fund": {
+          "stage_focus": "PRESEED_SEED",
+          "sector_tags": [
+            "mobility",
+            "logistics",
+            "supply_chain"
+          ],
+          "hq_region": "US"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "TO_REACH_OUT",
+          "last_contact_date": null,
+          "reconnect_after": null
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 0,
+        "follow_up_score": null,
+        "fit": {
+          "stage": 4,
+          "sector": 4,
+          "geo": 1,
+          "total": 9
+        },
+        "breakdown": null,
+        "last_signal_date": null,
+        "action": "DONT_PRIORITIZE",
+        "hold_reason": null,
+        "reason_code": "QUIET"
+      }
+    },
+    {
+      "name": "V12 synthetic strong signal => capped",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [
+          {
+            "id": "s_syn",
+            "event_date": "2026-10-09",
+            "signal_type": "investment",
+            "relevance_tier": "direct",
+            "commitment": "confirmed",
+            "source_type": "portfolio_announcement",
+            "date_basis": "structured_metadata",
+            "excerpt_verified": true,
+            "is_synthetic": true,
+            "independent_source_count": 1,
+            "url_ok": true
+          }
+        ],
+        "fund": {
+          "stage_focus": "PRESEED_SEED",
+          "sector_tags": [
+            "mobility",
+            "logistics",
+            "supply_chain"
+          ],
+          "hq_region": "US"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "TO_REACH_OUT",
+          "last_contact_date": null,
+          "reconnect_after": null
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 1,
+        "follow_up_score": 80,
+        "fit": {
+          "stage": 4,
+          "sector": 4,
+          "geo": 1,
+          "total": 9
+        },
+        "breakdown": {
+          "relevance": 30,
+          "recency": 18,
+          "strength": 20,
+          "corroboration": 0,
+          "evidence_quality": 3,
+          "fund_fit": 9
+        },
+        "last_signal_date": "2026-10-09",
+        "action": "MONITOR",
+        "hold_reason": null,
+        "reason_code": "GATE_CAPPED"
+      }
+    },
+    {
+      "name": "V13 two events, top has 2 independent sources",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [
+          {
+            "id": "s_a",
+            "event_date": "2026-10-06",
+            "signal_type": "investment",
+            "relevance_tier": "direct",
+            "commitment": "confirmed",
+            "source_type": "portfolio_announcement",
+            "date_basis": "structured_metadata",
+            "excerpt_verified": true,
+            "is_synthetic": false,
+            "independent_source_count": 2,
+            "url_ok": true
+          },
+          {
+            "id": "s_b",
+            "event_date": "2026-09-28",
+            "signal_type": "blog_post",
+            "relevance_tier": "direct",
+            "commitment": "confirmed",
+            "source_type": "official_blog",
+            "date_basis": "structured_metadata",
+            "excerpt_verified": true,
+            "is_synthetic": false,
+            "independent_source_count": 1,
+            "url_ok": true
+          }
+        ],
+        "fund": {
+          "stage_focus": "PRESEED_SEED",
+          "sector_tags": [
+            "mobility",
+            "logistics",
+            "supply_chain"
+          ],
+          "hq_region": "US"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "TO_REACH_OUT",
+          "last_contact_date": null,
+          "reconnect_after": null
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 2,
+        "follow_up_score": 91,
+        "fit": {
+          "stage": 4,
+          "sector": 4,
+          "geo": 1,
+          "total": 9
+        },
+        "breakdown": {
+          "relevance": 30,
+          "recency": 16,
+          "strength": 20,
+          "corroboration": 6,
+          "evidence_quality": 10,
+          "fund_fit": 9
+        },
+        "last_signal_date": "2026-10-06",
+        "action": "REACH_OUT_NOW",
+        "hold_reason": null,
+        "reason_code": "STRONG_RELEVANT_SIGNAL"
+      }
+    },
+    {
+      "name": "V14 partial assessment, nothing found",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [],
+        "fund": {
+          "stage_focus": "PRESEED_SEED",
+          "sector_tags": [
+            "mobility",
+            "logistics",
+            "supply_chain"
+          ],
+          "hq_region": "US"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "TO_REACH_OUT",
+          "last_contact_date": null,
+          "reconnect_after": null
+        },
+        "assessment_status": "PARTIAL"
+      },
+      "expected": {
+        "qualifying_signals": 0,
+        "follow_up_score": null,
+        "fit": {
+          "stage": 4,
+          "sector": 4,
+          "geo": 1,
+          "total": 9
+        },
+        "breakdown": null,
+        "last_signal_date": null,
+        "action": "ASSESSMENT_INCOMPLETE",
+        "hold_reason": null,
+        "reason_code": "INCOMPLETE"
+      }
+    },
+    {
+      "name": "V15 failed assessment",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [],
+        "fund": {
+          "stage_focus": "PRESEED_SEED",
+          "sector_tags": [
+            "mobility",
+            "logistics",
+            "supply_chain"
+          ],
+          "hq_region": "US"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "TO_REACH_OUT",
+          "last_contact_date": null,
+          "reconnect_after": null
+        },
+        "assessment_status": "FAILED"
+      },
+      "expected": {
+        "qualifying_signals": 0,
+        "follow_up_score": null,
+        "fit": {
+          "stage": 4,
+          "sector": 4,
+          "geo": 1,
+          "total": 9
+        },
+        "breakdown": null,
+        "last_signal_date": null,
+        "action": "ASSESSMENT_INCOMPLETE",
+        "hold_reason": null,
+        "reason_code": "INCOMPLETE"
+      }
+    },
+    {
+      "name": "V16 rumored investment 3d",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [
+          {
+            "id": "s_rum",
+            "event_date": "2026-10-09",
+            "signal_type": "investment",
+            "relevance_tier": "direct",
+            "commitment": "rumor",
+            "source_type": "reputable_news",
+            "date_basis": "published_date",
+            "excerpt_verified": true,
+            "is_synthetic": false,
+            "independent_source_count": 1,
+            "url_ok": true
+          }
+        ],
+        "fund": {
+          "stage_focus": "PRESEED_SEED",
+          "sector_tags": [
+            "mobility",
+            "logistics",
+            "supply_chain"
+          ],
+          "hq_region": "US"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "TO_REACH_OUT",
+          "last_contact_date": null,
+          "reconnect_after": null
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 1,
+        "follow_up_score": 73,
+        "fit": {
+          "stage": 4,
+          "sector": 4,
+          "geo": 1,
+          "total": 9
+        },
+        "breakdown": {
+          "relevance": 30,
+          "recency": 18,
+          "strength": 8,
+          "corroboration": 0,
+          "evidence_quality": 8,
+          "fund_fit": 9
+        },
+        "last_signal_date": "2026-10-09",
+        "action": "MONITOR",
+        "hold_reason": null,
+        "reason_code": "GATE_CAPPED"
+      }
+    },
+    {
+      "name": "V17 relevance 'none' never qualifies",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [
+          {
+            "id": "s_none",
+            "event_date": "2026-10-10",
+            "signal_type": "investment",
+            "relevance_tier": "none",
+            "commitment": "confirmed",
+            "source_type": "portfolio_announcement",
+            "date_basis": "structured_metadata",
+            "excerpt_verified": true,
+            "is_synthetic": false,
+            "independent_source_count": 1,
+            "url_ok": true
+          }
+        ],
+        "fund": {
+          "stage_focus": "PRESEED_SEED",
+          "sector_tags": [
+            "mobility",
+            "logistics",
+            "supply_chain"
+          ],
+          "hq_region": "US"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "TO_REACH_OUT",
+          "last_contact_date": null,
+          "reconnect_after": null
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 0,
+        "follow_up_score": null,
+        "fit": {
+          "stage": 4,
+          "sector": 4,
+          "geo": 1,
+          "total": 9
+        },
+        "breakdown": null,
+        "last_signal_date": null,
+        "action": "DONT_PRIORITIZE",
+        "hold_reason": null,
+        "reason_code": "QUIET"
+      }
+    },
+    {
+      "name": "V18 event dated +3 days (future) rejected",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [
+          {
+            "id": "s_fut",
+            "event_date": "2026-10-15",
+            "signal_type": "investment",
+            "relevance_tier": "direct",
+            "commitment": "confirmed",
+            "source_type": "portfolio_announcement",
+            "date_basis": "structured_metadata",
+            "excerpt_verified": true,
+            "is_synthetic": false,
+            "independent_source_count": 1,
+            "url_ok": true
+          }
+        ],
+        "fund": {
+          "stage_focus": "PRESEED_SEED",
+          "sector_tags": [
+            "mobility",
+            "logistics",
+            "supply_chain"
+          ],
+          "hq_region": "US"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "TO_REACH_OUT",
+          "last_contact_date": null,
+          "reconnect_after": null
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 0,
+        "follow_up_score": null,
+        "fit": {
+          "stage": 4,
+          "sector": 4,
+          "geo": 1,
+          "total": 9
+        },
+        "breakdown": null,
+        "last_signal_date": null,
+        "action": "DONT_PRIORITIZE",
+        "hold_reason": null,
+        "reason_code": "QUIET"
+      }
+    },
+    {
+      "name": "V19 event dated +1 day tolerated (clamped to 0)",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [
+          {
+            "id": "s_tol",
+            "event_date": "2026-10-13",
+            "signal_type": "investment",
+            "relevance_tier": "direct",
+            "commitment": "confirmed",
+            "source_type": "portfolio_announcement",
+            "date_basis": "structured_metadata",
+            "excerpt_verified": true,
+            "is_synthetic": false,
+            "independent_source_count": 1,
+            "url_ok": true
+          }
+        ],
+        "fund": {
+          "stage_focus": "PRESEED_SEED",
+          "sector_tags": [
+            "mobility",
+            "logistics",
+            "supply_chain"
+          ],
+          "hq_region": "US"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "TO_REACH_OUT",
+          "last_contact_date": null,
+          "reconnect_after": null
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 1,
+        "follow_up_score": 89,
+        "fit": {
+          "stage": 4,
+          "sector": 4,
+          "geo": 1,
+          "total": 9
+        },
+        "breakdown": {
+          "relevance": 30,
+          "recency": 20,
+          "strength": 20,
+          "corroboration": 0,
+          "evidence_quality": 10,
+          "fund_fit": 9
+        },
+        "last_signal_date": "2026-10-13",
+        "action": "REACH_OUT_NOW",
+        "hold_reason": null,
+        "reason_code": "STRONG_RELEVANT_SIGNAL"
+      }
+    },
+    {
+      "name": "V20 excerpt NOT verified => evidence gate",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [
+          {
+            "id": "s_unv",
+            "event_date": "2026-10-07",
+            "signal_type": "investment",
+            "relevance_tier": "direct",
+            "commitment": "confirmed",
+            "source_type": "portfolio_announcement",
+            "date_basis": "structured_metadata",
+            "excerpt_verified": false,
+            "is_synthetic": false,
+            "independent_source_count": 1,
+            "url_ok": true
+          }
+        ],
+        "fund": {
+          "stage_focus": "PRESEED_SEED",
+          "sector_tags": [
+            "mobility",
+            "logistics",
+            "supply_chain"
+          ],
+          "hq_region": "US"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "TO_REACH_OUT",
+          "last_contact_date": null,
+          "reconnect_after": null
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 1,
+        "follow_up_score": 84,
+        "fit": {
+          "stage": 4,
+          "sector": 4,
+          "geo": 1,
+          "total": 9
+        },
+        "breakdown": {
+          "relevance": 30,
+          "recency": 17,
+          "strength": 20,
+          "corroboration": 0,
+          "evidence_quality": 8,
+          "fund_fit": 9
+        },
+        "last_signal_date": "2026-10-07",
+        "action": "MONITOR",
+        "hold_reason": null,
+        "reason_code": "GATE_CAPPED"
+      }
+    },
+    {
+      "name": "V21 passed + reconnect due + strong signal",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [
+          {
+            "id": "s_strong",
+            "event_date": "2026-10-07",
+            "signal_type": "investment",
+            "relevance_tier": "direct",
+            "commitment": "confirmed",
+            "source_type": "portfolio_announcement",
+            "date_basis": "structured_metadata",
+            "excerpt_verified": true,
+            "is_synthetic": false,
+            "independent_source_count": 1,
+            "url_ok": true
+          }
+        ],
+        "fund": {
+          "stage_focus": "PRESEED_SEED",
+          "sector_tags": [
+            "mobility",
+            "logistics",
+            "supply_chain"
+          ],
+          "hq_region": "US"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "PASSED",
+          "last_contact_date": "2026-08-03",
+          "reconnect_after": "2026-10-11"
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 1,
+        "follow_up_score": 86,
+        "fit": {
+          "stage": 4,
+          "sector": 4,
+          "geo": 1,
+          "total": 9
+        },
+        "breakdown": {
+          "relevance": 30,
+          "recency": 17,
+          "strength": 20,
+          "corroboration": 0,
+          "evidence_quality": 10,
+          "fund_fit": 9
+        },
+        "last_signal_date": "2026-10-07",
+        "action": "MONITOR",
+        "hold_reason": null,
+        "reason_code": "REOPEN_WINDOW"
+      }
+    },
+    {
+      "name": "V22 waiting 10d but signal PRE-dates contact",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [
+          {
+            "id": "s_pre",
+            "event_date": "2026-09-30",
+            "signal_type": "investment",
+            "relevance_tier": "direct",
+            "commitment": "confirmed",
+            "source_type": "portfolio_announcement",
+            "date_basis": "structured_metadata",
+            "excerpt_verified": true,
+            "is_synthetic": false,
+            "independent_source_count": 1,
+            "url_ok": true
+          }
+        ],
+        "fund": {
+          "stage_focus": "PRESEED_SEED",
+          "sector_tags": [
+            "mobility",
+            "logistics",
+            "supply_chain"
+          ],
+          "hq_region": "US"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "WAITING_FOR_RESPONSE",
+          "last_contact_date": "2026-10-02",
+          "reconnect_after": null
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 1,
+        "follow_up_score": 81,
+        "fit": {
+          "stage": 4,
+          "sector": 4,
+          "geo": 1,
+          "total": 9
+        },
+        "breakdown": {
+          "relevance": 30,
+          "recency": 12,
+          "strength": 20,
+          "corroboration": 0,
+          "evidence_quality": 10,
+          "fund_fit": 9
+        },
+        "last_signal_date": "2026-09-30",
+        "action": "MONITOR",
+        "hold_reason": null,
+        "reason_code": "WAITING_NO_STRONG_HOOK"
+      }
+    },
+    {
+      "name": "V23 unknown fund profile + strong signal",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [
+          {
+            "id": "s_strong",
+            "event_date": "2026-10-07",
+            "signal_type": "investment",
+            "relevance_tier": "direct",
+            "commitment": "confirmed",
+            "source_type": "portfolio_announcement",
+            "date_basis": "structured_metadata",
+            "excerpt_verified": true,
+            "is_synthetic": false,
+            "independent_source_count": 1,
+            "url_ok": true
+          }
+        ],
+        "fund": {
+          "stage_focus": null,
+          "sector_tags": [],
+          "hq_region": null
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "TO_REACH_OUT",
+          "last_contact_date": null,
+          "reconnect_after": null
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 1,
+        "follow_up_score": 82,
+        "fit": {
+          "stage": 2,
+          "sector": 2,
+          "geo": 1,
+          "total": 5
+        },
+        "breakdown": {
+          "relevance": 30,
+          "recency": 17,
+          "strength": 20,
+          "corroboration": 0,
+          "evidence_quality": 10,
+          "fund_fit": 5
+        },
+        "last_signal_date": "2026-10-07",
+        "action": "REACH_OUT_NOW",
+        "hold_reason": null,
+        "reason_code": "STRONG_RELEVANT_SIGNAL"
+      }
+    },
+    {
+      "name": "V24 company geography known (India) vs US fund",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [
+          {
+            "id": "s_strong",
+            "event_date": "2026-10-07",
+            "signal_type": "investment",
+            "relevance_tier": "direct",
+            "commitment": "confirmed",
+            "source_type": "portfolio_announcement",
+            "date_basis": "structured_metadata",
+            "excerpt_verified": true,
+            "is_synthetic": false,
+            "independent_source_count": 1,
+            "url_ok": true
+          }
+        ],
+        "fund": {
+          "stage_focus": "PRESEED_SEED",
+          "sector_tags": [
+            "mobility",
+            "logistics",
+            "supply_chain"
+          ],
+          "hq_region": "US"
+        },
+        "company_geography": "India",
+        "relationship": {
+          "contact_status": "TO_REACH_OUT",
+          "last_contact_date": null,
+          "reconnect_after": null
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 1,
+        "follow_up_score": 85,
+        "fit": {
+          "stage": 4,
+          "sector": 4,
+          "geo": 0,
+          "total": 8
+        },
+        "breakdown": {
+          "relevance": 30,
+          "recency": 17,
+          "strength": 20,
+          "corroboration": 0,
+          "evidence_quality": 10,
+          "fund_fit": 8
+        },
+        "last_signal_date": "2026-10-07",
+        "action": "REACH_OUT_NOW",
+        "hold_reason": null,
+        "reason_code": "STRONG_RELEVANT_SIGNAL"
+      }
+    },
+    {
+      "name": "V25 waiting 31d, quiet (overdue, no hook)",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [],
+        "fund": {
+          "stage_focus": "SEED_EARLY",
+          "sector_tags": [
+            "generalist",
+            "b2b_saas"
+          ],
+          "hq_region": "India"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "WAITING_FOR_RESPONSE",
+          "last_contact_date": "2026-09-11",
+          "reconnect_after": null
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 0,
+        "follow_up_score": null,
+        "fit": {
+          "stage": 4,
+          "sector": 3,
+          "geo": 1,
+          "total": 8
+        },
+        "breakdown": null,
+        "last_signal_date": null,
+        "action": "DONT_PRIORITIZE",
+        "hold_reason": null,
+        "reason_code": "OVERDUE_NO_HOOK"
+      }
+    },
+    {
+      "name": "V26 direct official blog post 12d, generalist fund",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [
+          {
+            "id": "s_blog",
+            "event_date": "2026-09-30",
+            "signal_type": "blog_post",
+            "relevance_tier": "direct",
+            "commitment": "confirmed",
+            "source_type": "official_blog",
+            "date_basis": "structured_metadata",
+            "excerpt_verified": true,
+            "is_synthetic": false,
+            "independent_source_count": 1,
+            "url_ok": true
+          }
+        ],
+        "fund": {
+          "stage_focus": "SEED_EARLY",
+          "sector_tags": [
+            "generalist",
+            "b2b_saas"
+          ],
+          "hq_region": "India"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "TO_REACH_OUT",
+          "last_contact_date": null,
+          "reconnect_after": null
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 1,
+        "follow_up_score": 73,
+        "fit": {
+          "stage": 4,
+          "sector": 3,
+          "geo": 1,
+          "total": 8
+        },
+        "breakdown": {
+          "relevance": 30,
+          "recency": 12,
+          "strength": 13,
+          "corroboration": 0,
+          "evidence_quality": 10,
+          "fund_fit": 8
+        },
+        "last_signal_date": "2026-09-30",
+        "action": "REACH_OUT_NOW",
+        "hold_reason": null,
+        "reason_code": "STRONG_RELEVANT_SIGNAL"
+      }
+    },
+    {
+      "name": "V27 direct podcast 25d (aging => freshness gate)",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [
+          {
+            "id": "s_pod",
+            "event_date": "2026-09-17",
+            "signal_type": "podcast",
+            "relevance_tier": "direct",
+            "commitment": "confirmed",
+            "source_type": "podcast",
+            "date_basis": "published_date",
+            "excerpt_verified": true,
+            "is_synthetic": false,
+            "independent_source_count": 1,
+            "url_ok": true
+          }
+        ],
+        "fund": {
+          "stage_focus": "SEED_EARLY",
+          "sector_tags": [
+            "generalist",
+            "b2b_saas"
+          ],
+          "hq_region": "India"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "TO_REACH_OUT",
+          "last_contact_date": null,
+          "reconnect_after": null
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 1,
+        "follow_up_score": 61,
+        "fit": {
+          "stage": 4,
+          "sector": 3,
+          "geo": 1,
+          "total": 8
+        },
+        "breakdown": {
+          "relevance": 30,
+          "recency": 3,
+          "strength": 12,
+          "corroboration": 0,
+          "evidence_quality": 8,
+          "fund_fit": 8
+        },
+        "last_signal_date": "2026-09-17",
+        "action": "MONITOR",
+        "hold_reason": null,
+        "reason_code": "GATE_CAPPED"
+      }
+    },
+    {
+      "name": "V28 INVESTMENT in unrelated company (broad) 1d",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [
+          {
+            "id": "s_chip",
+            "event_date": "2026-10-11",
+            "signal_type": "investment",
+            "relevance_tier": "broad",
+            "commitment": "confirmed",
+            "source_type": "portfolio_announcement",
+            "date_basis": "structured_metadata",
+            "excerpt_verified": true,
+            "is_synthetic": false,
+            "independent_source_count": 1,
+            "url_ok": true
+          }
+        ],
+        "fund": {
+          "stage_focus": "SEED_EARLY",
+          "sector_tags": [
+            "generalist",
+            "b2b_saas"
+          ],
+          "hq_region": "India"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "TO_REACH_OUT",
+          "last_contact_date": null,
+          "reconnect_after": null
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 1,
+        "follow_up_score": 34,
+        "fit": {
+          "stage": 4,
+          "sector": 3,
+          "geo": 1,
+          "total": 8
+        },
+        "breakdown": {
+          "relevance": 5,
+          "recency": 7,
+          "strength": 10,
+          "corroboration": 0,
+          "evidence_quality": 4,
+          "fund_fit": 8
+        },
+        "last_signal_date": "2026-10-11",
+        "action": "DONT_PRIORITIZE",
+        "hold_reason": null,
+        "reason_code": "GENERIC_ACTIVITY_NOT_RELEVANT"
+      }
+    },
+    {
+      "name": "V29 b2b_saas thesis post 8d, generalist fund",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [
+          {
+            "id": "s_saas",
+            "event_date": "2026-10-04",
+            "signal_type": "thesis_update",
+            "relevance_tier": "b2b_saas",
+            "commitment": "confirmed",
+            "source_type": "official_blog",
+            "date_basis": "structured_metadata",
+            "excerpt_verified": true,
+            "is_synthetic": false,
+            "independent_source_count": 1,
+            "url_ok": true
+          }
+        ],
+        "fund": {
+          "stage_focus": "SEED_EARLY",
+          "sector_tags": [
+            "generalist",
+            "b2b_saas"
+          ],
+          "hq_region": "India"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "TO_REACH_OUT",
+          "last_contact_date": null,
+          "reconnect_after": null
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 1,
+        "follow_up_score": 51,
+        "fit": {
+          "stage": 4,
+          "sector": 3,
+          "geo": 1,
+          "total": 8
+        },
+        "breakdown": {
+          "relevance": 12,
+          "recency": 11,
+          "strength": 12,
+          "corroboration": 0,
+          "evidence_quality": 8,
+          "fund_fit": 8
+        },
+        "last_signal_date": "2026-10-04",
+        "action": "MONITOR",
+        "hold_reason": null,
+        "reason_code": "MODERATE_SIGNAL"
+      }
+    },
+    {
+      "name": "V30 exactly 30 days old direct event",
+      "today": "2026-10-12",
+      "input": {
+        "signals": [
+          {
+            "id": "s_30",
+            "event_date": "2026-09-12",
+            "signal_type": "blog_post",
+            "relevance_tier": "direct",
+            "commitment": "confirmed",
+            "source_type": "official_blog",
+            "date_basis": "structured_metadata",
+            "excerpt_verified": true,
+            "is_synthetic": false,
+            "independent_source_count": 1,
+            "url_ok": true
+          }
+        ],
+        "fund": {
+          "stage_focus": "PRESEED_SEED",
+          "sector_tags": [
+            "mobility",
+            "logistics",
+            "supply_chain"
+          ],
+          "hq_region": "US"
+        },
+        "company_geography": null,
+        "relationship": {
+          "contact_status": "TO_REACH_OUT",
+          "last_contact_date": null,
+          "reconnect_after": null
+        },
+        "assessment_status": "SIGNAL_FOUND"
+      },
+      "expected": {
+        "qualifying_signals": 1,
+        "follow_up_score": 63,
+        "fit": {
+          "stage": 4,
+          "sector": 4,
+          "geo": 1,
+          "total": 9
+        },
+        "breakdown": {
+          "relevance": 30,
+          "recency": 1,
+          "strength": 13,
+          "corroboration": 0,
+          "evidence_quality": 10,
+          "fund_fit": 9
+        },
+        "last_signal_date": "2026-09-12",
+        "action": "MONITOR",
+        "hold_reason": null,
+        "reason_code": "GATE_CAPPED"
+      }
+    }
+  ]
+}

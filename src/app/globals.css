@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+/* Design tokens from docs/10_DESIGN_SPEC.md §5 */
+:root {
+  --bg: #f3f5f4;
+  --surface: #ffffff;
+  --ink-900: #0e1f2b;
+  --ink-700: #2b3f4d;
+  --ink-500: #5e7280;
+  --line: #e3e8e6;
+  --brand: #0f766e;
+  --brand-ink: #0b3b3a;
+  --accent: #f59e0b;
+  --ai: #7c3aed;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink-900: var(--ink-900);
+  --color-ink-700: var(--ink-700);
+  --color-ink-500: var(--ink-500);
+  --color-line: var(--line);
+  --color-brand: var(--brand);
+  --color-brand-ink: var(--brand-ink);
+  --color-accent: var(--accent);
+  --color-ai: var(--ai);
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-display: var(--font-jakarta), system-ui, sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink-900);
+  font-family: var(--font-sans);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

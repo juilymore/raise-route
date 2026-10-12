@@ -1,0 +1,34 @@
+{
+  "_comment": "Deterministic relevance CROSS-CHECK. Keywords can only DOWNGRADE the model's relevance tier, never upgrade it (keywords false-positive: 'software supply chain attack' is not logistics). Matching: case-insensitive, whole-word/phrase, on title + evidence_excerpt (+ summary). Add/remove terms freely, bump scoring version if you do.",
+  "direct": [
+    "logistics", "supply chain", "supply-chain", "freight", "freight forwarding", "freight tech", "freighttech",
+    "fleet", "fleet management", "warehouse", "warehousing", "last-mile", "last mile", "3pl", "third-party logistics",
+    "trucking", "shipping", "shipment", "cargo", "fulfilment", "fulfillment", "tms", "wms",
+    "transportation management", "route optimization", "route optimisation", "cold chain", "delivery orchestration",
+    "logistics tech", "logistics technology", "supply chain visibility", "freight marketplace", "carrier", "shipper"
+  ],
+  "adjacent": [
+    "procurement", "trade finance", "customs", "port", "ports", "maritime", "mobility", "industrial iot",
+    "manufacturing", "inventory", "demand forecasting", "erp", "vertical saas", "vertical software",
+    "b2b marketplace", "telematics", "iot", "robotics", "warehouse automation", "ev fleet", "commerce enablement",
+    "retail operations", "industrial", "physical economy", "deep tech", "deeptech"
+  ],
+  "b2b_saas": [
+    "b2b saas", "saas", "enterprise software", "enterprise saas", "b2b software", "workflow software",
+    "cloud software", "vertical saas", "sales-led", "product-led growth", "plg", "annual recurring revenue", "arr"
+  ],
+  "broad": [
+    "startup", "startups", "venture", "founder", "founders", "fundraising", "seed round", "series a",
+    "funding round", "ai", "artificial intelligence", "technology", "tech"
+  ],
+  "ambiguous_phrases_not_logistics": [
+    "software supply chain", "supply chain attack", "supply chain security", "open source supply chain",
+    "supply chain compromise", "fleet of models", "fleet of agents", "carrier-grade", "port scan", "sbom"
+  ],
+  "downgrade_rule": {
+    "direct":   "requires >=1 'direct' keyword hit (ambiguous phrases excluded) else downgrade to best tier with a hit",
+    "adjacent": "requires >=1 'adjacent' or 'direct' hit else downgrade",
+    "b2b_saas": "requires >=1 'b2b_saas'/'adjacent'/'direct' hit else downgrade to broad",
+    "broad":    "no requirement"
+  }
+}

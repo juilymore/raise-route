@@ -1,0 +1,64 @@
+{
+  "_comment": "Source strategy config. EVERY URL here is a starting hint marked verify:true — Phase P03 must smoke-test each (HTTP 200, parses as RSS/Atom, has dated items) and DISABLE the ones that fail rather than ship broken sources. Never scrape LinkedIn or X/Twitter (ToS + fragile).",
+  "fetch": {
+    "user_agent": "VCIntelBot/1.0 (fundraising research tool; contact via APP_BASE_URL)",
+    "timeout_ms": 8000,
+    "max_bytes": 1500000,
+    "max_redirects": 4,
+    "respect_robots_txt": true,
+    "per_domain_delay_ms": 1000,
+    "allowed_schemes": ["https", "http"],
+    "block_private_and_link_local_ips": true,
+    "max_pages_per_vc_per_run": 12
+  },
+  "google_news_rss": {
+    "url_template": "https://news.google.com/rss/search?q={query}&hl=en-IN&gl=IN&ceid=IN:en",
+    "query_templates": [
+      "\"{firm}\" (logistics OR \"supply chain\" OR freight OR fleet OR warehouse OR \"last-mile\") when:30d",
+      "\"{firm}\" (invests OR invested OR backs OR led OR announces OR interview OR podcast OR keynote OR panel) when:30d"
+    ],
+    "person_query_template": "\"{person}\" \"{firm}\" when:30d",
+    "note": "Result links are Google redirect URLs: resolve to the publisher URL before fetching. `when:30d` is a hint only — still validate dates ourselves."
+  },
+  "official_feed_discovery": {
+    "link_rel_alternate_types": ["application/rss+xml", "application/atom+xml"],
+    "probe_paths": ["/feed", "/rss", "/feed.xml", "/rss.xml", "/atom.xml", "/index.xml", "/blog/feed", "/blog/rss", "/blog/feed.xml", "/news/feed", "/insights/feed", "/posts/feed"],
+    "also_look_for": ["substack.com/feed", "medium.com/feed/@", "YouTube channel_id -> https://www.youtube.com/feeds/videos.xml?channel_id=<ID>", "podcast RSS linked from the site"]
+  },
+  "sector_feeds_push_model": [
+    { "name": "Supply Chain Dive",  "url": "https://www.supplychaindive.com/feeds/news/", "region": "US",     "verify": true },
+    { "name": "FreightWaves",       "url": "https://www.freightwaves.com/news/feed",      "region": "US",     "verify": true },
+    { "name": "The Loadstar",       "url": "https://theloadstar.com/feed/",               "region": "Global", "verify": true },
+    { "name": "TechCrunch Venture", "url": "https://techcrunch.com/category/venture/feed/", "region": "Global", "verify": true },
+    { "name": "Crunchbase News",    "url": "https://news.crunchbase.com/feed/",           "region": "Global", "verify": true },
+    { "name": "Inc42",              "url": "https://inc42.com/feed/",                     "region": "India",  "verify": true },
+    { "name": "YourStory",          "url": "https://yourstory.com/feed",                  "region": "India",  "verify": true },
+    { "name": "Entrackr",           "url": "https://entrackr.com/feed/",                  "region": "India",  "verify": true },
+    { "name": "Tech.eu",            "url": "https://tech.eu/feed/",                       "region": "Europe", "verify": true }
+  ],
+  "domain_classes": {
+    "reputable_news": ["reuters.com", "bloomberg.com", "ft.com", "wsj.com", "techcrunch.com", "economictimes.indiatimes.com", "livemint.com", "business-standard.com", "moneycontrol.com", "vccircle.com", "forbes.com", "thehindubusinessline.com", "cnbc.com"],
+    "trade_press": ["supplychaindive.com", "freightwaves.com", "theloadstar.com", "supplychainbrain.com", "inc42.com", "entrackr.com", "yourstory.com", "tech.eu", "news.crunchbase.com", "sifted.eu"],
+    "wire_and_pr_syndicators": ["prnewswire.com", "businesswire.com", "globenewswire.com", "pti", "ani", "ians", "einpresswire.com", "accesswire.com"],
+    "never_fetch": ["linkedin.com", "x.com", "twitter.com", "facebook.com", "instagram.com"]
+  },
+  "independence_rules": {
+    "independent_source": "distinct registrable domain AND not a near-duplicate of another source's text (>=0.85 shingle similarity => same underlying copy) AND not a known syndicator re-run",
+    "same_event_cluster": "same vc_id + same normalized subject_entity + same signal_type family + event dates within 7 days"
+  },
+  "date_resolution_ladder": [
+    "1. JSON-LD datePublished (structured_metadata)",
+    "2. meta article:published_time / og:published_time / itemprop datePublished (structured_metadata)",
+    "3. RSS/Atom pubDate/published (published_date)",
+    "4. <time datetime> inside article header (published_date)",
+    "5. URL path date /YYYY/MM/DD/ (published_date, lower certainty)",
+    "6. Explicit date stated in text and extracted by Gemini (explicit_in_text)",
+    "7. Nothing => DATE_UNVERIFIED => candidate cannot become a signal",
+    "NEVER use dateModified, fetch time, or 'today' as the event date."
+  ],
+  "optional_search_apis": {
+    "_note": "Raw-results-only. NEVER call their built-in 'answer'/LLM endpoints: all AI tasks must be Gemini. Tavily: topic=news, days=30, include_answer=false. Exa: type=auto/neural search with startPublishedDate, no 'answer' endpoint.",
+    "tavily": { "env": "TAVILY_API_KEY", "free_tier": "1,000 credits/month, no card (verify)" },
+    "exa":    { "env": "EXA_API_KEY",    "free_tier": "starter credits + monthly credits (verify)" }
+  }
+}
