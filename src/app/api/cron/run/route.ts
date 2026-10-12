@@ -9,7 +9,7 @@ export const maxDuration = 300; // Hobby limit per Vercel docs (verify at deploy
 /**
  * External trigger (GitHub Actions or any scheduler): GET with `Authorization: Bearer $CRON_SECRET`.
  * run_key = cron-YYYY-MM-DD, so duplicate triggers on the same day collapse into ONE run (start_run is idempotent).
- * No scheduler is configured by default: the founder presses "Run now" instead.
+ * Vercel cron calls this route Mon+Thu (vercel.json); the founder can also press "Run now".
  */
 export async function GET(req: Request) {
   if (!hasValidBearer(req, getEnv().CRON_SECRET)) return NextResponse.json({ error: "unauthorized" }, { status: 401 });

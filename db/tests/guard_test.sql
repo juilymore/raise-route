@@ -68,12 +68,16 @@ do $$ declare n text; s text; begin
   raise notice 'PASS: L2 apply_assessment updated signal columns and IGNORED malicious founder keys';
 end $$;
 
--- prev_* roll-forward happens once per run (idempotent retries)
+-- prev_* roll-forward happens once per run (idempotent retries).
+-- Relative assertion (works on a fresh seed AND on a database that already holds real run results):
+-- remember prev_* after the FIRST apply of this run, apply again, and require it to be unchanged.
+insert into _t select 'prev_after_first', coalesce(prev_follow_up_score::text, 'NULL') from public.vc_pipeline where id = (select v::uuid from _t where k='vc1');
 select public.apply_assessment((select v::uuid from _t where k='vc1'), (select id from _run),
   '{"recommended_action":"MONITOR","follow_up_score":"50","assessment_status":"SIGNAL_FOUND","scoring_version":"v1.0.0"}'::jsonb);
-do $$ declare p int; begin
-  select prev_follow_up_score into p from public.vc_pipeline where id=(select v::uuid from _t where k='vc1');
-  if p is not null then raise exception 'TEST FAILED [prev overwritten on retry within same run], prev=%', p; end if;
+do $$ declare p text; begin
+  select coalesce(prev_follow_up_score::text, 'NULL') into p from public.vc_pipeline where id=(select v::uuid from _t where k='vc1');
+  if p is distinct from (select v from _t where k='prev_after_first') then
+    raise exception 'TEST FAILED [prev overwritten on retry within same run], before=% after=%', (select v from _t where k='prev_after_first'), p; end if;
   raise notice 'PASS: L2 prev_* is not rolled twice within one run';
 end $$;
 
