@@ -22,21 +22,21 @@ export default async function CalibrationPage() {
   return (
     <div className="mx-auto max-w-[900px] space-y-6">
       <div>
-        <h1 className="font-display text-[28px] font-bold text-ink-900 sm:text-[32px]">Calibration</h1>
-        <p className="mt-1 text-sm text-ink-500">How useful the recommendations have been, according to you. Every number shows how many ratings it is based on.</p>
+        <h1 className="font-display text-[28px] font-bold text-ink-900 sm:text-[32px]">Calibration: are the suggestions any good?</h1>
+        <p className="mt-1 max-w-2xl text-sm text-ink-500">This page checks the app against real life. You tell it two things: was a suggestion useful (thumbs up or down on a card), and what happened after you contacted an investor. The page then shows how often the app was right. The count behind every number is shown, so you know how much to trust it.</p>
       </div>
 
       <Card>
-        <CardTitle aside={<span className="text-xs tabular-nums text-ink-500">n = {f.n}</span>}>Feedback on recommendations</CardTitle>
+        <CardTitle aside={<span className="text-xs tabular-nums text-ink-500">n = {f.n}</span>}>Your thumbs up and down</CardTitle>
         {f.n === 0 ? (
-          <EmptyState title="No feedback yet" body="Use the thumbs on a recommendation card. Ratings are saved for your review." />
+          <EmptyState title="No thumbs yet" body="On the dashboard, each suggestion has a thumbs up and a thumbs down. Press one after you decide whether the suggestion was good. Your answers show up here." />
         ) : (
           <>
-            <p className="text-sm text-ink-700"><strong className="tabular-nums">{f.positive}</strong> useful, <strong className="tabular-nums">{f.negative}</strong> not useful ({pct(f.usefulRate)} useful, n = {f.n}).</p>
-            {!f.enough && <p className="mt-2 rounded-xl bg-bg p-3 text-sm text-ink-700">Too few ratings to conclude anything (fewer than {MIN_SAMPLES}). Treat these numbers as anecdotes.</p>}
+            <p className="text-sm text-ink-700"><strong className="tabular-nums">{f.positive}</strong> thumbs up and <strong className="tabular-nums">{f.negative}</strong> thumbs down: {pct(f.usefulRate)} of suggestions were useful (out of {f.n} rated).</p>
+            {!f.enough && <p className="mt-2 rounded-xl bg-bg p-3 text-sm text-ink-700">Too few ratings so far (fewer than {MIN_SAMPLES}) to say anything reliable. Think of these numbers as a first impression.</p>}
             {f.reasons.length > 0 && (
               <div className="mt-4">
-                <h3 className="mb-2 text-sm font-semibold text-ink-900">Why recommendations were marked not useful</h3>
+                <h3 className="mb-2 text-sm font-semibold text-ink-900">Why a suggestion got a thumbs down</h3>
                 <ul className="space-y-1.5">
                   {f.reasons.map((r) => (
                     <li key={r.reason} className="flex items-center gap-3 text-sm">
@@ -53,9 +53,9 @@ export default async function CalibrationPage() {
       </Card>
 
       <Card>
-        <CardTitle aside={<span className="text-xs tabular-nums text-ink-500">n = {o.n}</span>}>What happened after reaching out</CardTitle>
+        <CardTitle aside={<span className="text-xs tabular-nums text-ink-500">n = {o.n}</span>}>What happened after you reached out</CardTitle>
         {o.n === 0 ? (
-          <EmptyState title="No outcomes logged yet" body="After you contact an investor, log what happened on their page. This is kept separate from thumbs feedback." />
+          <EmptyState title="No results logged yet" body="After you contact an investor, open their page and log what happened (replied, meeting, passed, no response). That tells us whether the suggestions lead to real conversations." />
         ) : (
           <>
             <dl className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
@@ -64,18 +64,18 @@ export default async function CalibrationPage() {
               <div><dt className="text-xs text-ink-500">Passed</dt><dd className="tabular-nums font-medium">{o.passed}</dd></div>
               <div><dt className="text-xs text-ink-500">No response</dt><dd className="tabular-nums font-medium">{o.noResponse}</dd></div>
             </dl>
-            <p className="mt-3 text-sm text-ink-700">Replies or meetings: {pct(o.responseRate)} (n = {o.n}).</p>
-            {!o.enough && <p className="mt-2 rounded-xl bg-bg p-3 text-sm text-ink-700">Too few outcomes to conclude anything (fewer than {MIN_SAMPLES}).</p>}
+            <p className="mt-3 text-sm text-ink-700">{pct(o.responseRate)} of the investors you contacted replied or booked a meeting (out of {o.n}).</p>
+            {!o.enough && <p className="mt-2 rounded-xl bg-bg p-3 text-sm text-ink-700">Too few results so far (fewer than {MIN_SAMPLES}) to say anything reliable.</p>}
           </>
         )}
       </Card>
 
       <Card>
-        <CardTitle>What this page does and does not do</CardTitle>
+        <CardTitle>Good to know</CardTitle>
         <ul className="list-disc space-y-1.5 pl-5 text-sm text-ink-700">
-          <li>Your ratings are stored so <em>you</em> can review them. They do <strong>not</strong> change scores, actions or any of your data, and the system does not learn from them automatically.</li>
-          <li>Changing the scoring rules is a deliberate, versioned edit to a configuration file, with the golden tests re-run.</li>
-          <li>{d.drafts} outreach draft{d.drafts === 1 ? "" : "s"} generated so far. Drafts are never sent by the system.</li>
+          <li>Your thumbs are saved only for you to look at. They do <strong>not</strong> change any score or action, and the app does not teach itself from them.</li>
+          <li>If the numbers show the suggestions are off, change the scoring numbers in Settings. That is a deliberate change you make; nothing changes by itself.</li>
+          <li>{d.drafts} email draft{d.drafts === 1 ? "" : "s"} written so far. The app never sends a draft for you.</li>
         </ul>
       </Card>
     </div>

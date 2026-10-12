@@ -6,7 +6,7 @@ import { DashboardHero } from "@/components/DashboardHero";
 import { OpportunityMatrix } from "@/components/OpportunityMatrix";
 import { ActionChip } from "@/components/ui/chips";
 import { Card, CardTitle, EmptyState, StatTile } from "@/components/ui/cards";
-import { getCompanyProfile, getLastRun, getOverview, getRunProgress, listAllCards, listChanges, listIncomplete, listQuiet, listTodaysActions } from "@/lib/db/readDb";
+import { getCompanyProfile, getIncompleteReasons, getLastRun, getOverview, getRunProgress, listAllCards, listChanges, listIncomplete, listQuiet, listTodaysActions } from "@/lib/db/readDb";
 import { getConfig } from "@/lib/config";
 import { currentIsFounder } from "@/lib/founder/server";
 
@@ -20,11 +20,11 @@ const greeting = () => {
 export default async function CommandCentre() {
   let d;
   try {
-    const [overview, actions, changes, quiet, incomplete, run, company, allCards] = await Promise.all([
-      getOverview(), listTodaysActions(12), listChanges(5), listQuiet(50), listIncomplete(50), getLastRun(), getCompanyProfile(), listAllCards(),
+    const [overview, actions, changes, quiet, incomplete, run, company, allCards, why] = await Promise.all([
+      getOverview(), listTodaysActions(12), listChanges(5), listQuiet(50), listIncomplete(50), getLastRun(), getCompanyProfile(), listAllCards(), getIncompleteReasons(),
     ]);
     const progress = run?.status === "RUNNING" ? await getRunProgress(run.id).catch(() => null) : null;
-    d = { overview, actions, changes, quiet, incomplete, run, company, allCards, progress };
+    d = { overview, actions, changes, quiet, incomplete, run, company, allCards, progress, why };
   } catch (e) {
     console.error("[command centre]", (e as Error).message);
     return (
@@ -34,7 +34,7 @@ export default async function CommandCentre() {
       </div>
     );
   }
-  const { overview: o, actions, changes, quiet, incomplete, run, company, allCards, progress } = d;
+  const { overview: o, actions, changes, quiet, incomplete, run, company, allCards, progress, why } = d;
   const founder = await currentIsFounder().catch(() => false);
   const quietCopy = getConfig().scoring.language.quiet;
   const worthContacting = o.reach_out_now + o.follow_up_now;
@@ -54,10 +54,10 @@ export default async function CommandCentre() {
 
       {/* 2. The four buckets, in the order Vikram should act on them */}
       <section aria-label="Summary" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <StatTile label="Reach out now" value={o.reach_out_now} hint="Strong, fresh, relevant. Send a first message." icon={Send} tone="green" href="/pipeline?action=REACH_OUT_NOW" pulse delay={0} />
-        <StatTile label="Follow up now" value={o.follow_up_now} hint="You know them; they did something new." icon={Reply} tone="teal" href="/pipeline?action=FOLLOW_UP_NOW" delay={60} />
+        <StatTile label="Reach out now" value={o.reach_out_now} hint="Strong, fresh, relevant. Send a first message." icon={Send} tone="orange" href="/pipeline?action=REACH_OUT_NOW" pulse delay={0} />
+        <StatTile label="Follow up now" value={o.follow_up_now} hint="You know them; they did something new." icon={Reply} tone="indigo" href="/pipeline?action=FOLLOW_UP_NOW" delay={60} />
         <StatTile label="Monitor" value={o.monitor} hint="Some activity. Not yet." icon={Eye} tone="blue" href="/pipeline?action=MONITOR" delay={120} />
-        <StatTile label="On hold" value={o.hold} hint="Spoke recently or waiting for a reply." icon={PauseCircle} tone="gray" href="/pipeline?action=HOLD" delay={180} />
+        <StatTile label="On hold" value={o.hold} hint="Already in touch. Do not message again yet." icon={PauseCircle} tone="amber" href="/pipeline?action=HOLD" delay={180} />
       </section>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
@@ -133,18 +133,23 @@ export default async function CommandCentre() {
               </ul>
             )}
             {incomplete.length > 0 && (
-              <Link href="/pipeline?action=ASSESSMENT_INCOMPLETE" className="mt-4 flex items-start gap-2 rounded-xl bg-orange-50 p-3 text-xs text-orange-900 hover:bg-orange-100">
-                <TriangleAlert size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
-                <span><strong>{incomplete.length} investor{incomplete.length === 1 ? "" : "s"} could not be fully checked</strong> (a source was unavailable). That is not evidence of inactivity, so they are not listed as quiet.</span>
-              </Link>
+              <div className="mt-4 rounded-xl bg-rose-50 p-3 text-xs text-rose-900">
+                <p className="flex items-start gap-2"><TriangleAlert size={14} className="mt-0.5 shrink-0" aria-hidden="true" /><span><strong>{incomplete.length} investor{incomplete.length === 1 ? "" : "s"} could not be fully checked.</strong> This is not the same as quiet: we simply could not tell.</span></p>
+                <ul className="mt-2 list-disc space-y-0.5 pl-6">
+                  {why.blocked > 0 && <li>{why.blocked}: news articles were found, but the publisher&apos;s website refused to open for our reader (blocked or paywalled).</li>}
+                  {why.sourceFailed > 0 && <li>{why.sourceFailed}: a source (investor feed or news search) did not answer.</li>}
+                  {why.backlog > 0 && <li>{why.backlog}: more articles than one run could read; the rest are read next run.</li>}
+                </ul>
+                <p className="mt-2">What to do: press <strong>Run now</strong> again later (some sites recover), or open an investor to see exactly what failed. <Link href="/pipeline?action=ASSESSMENT_INCOMPLETE" className="font-semibold underline">See the list</Link></p>
+              </div>
             )}
           </Card>
         </div>
       </div>
 
       {/* 3. Information only */}
-      <details className="group rounded-[20px] border border-line bg-surface p-5">
-        <summary className="flex cursor-pointer items-center gap-2 font-display text-xl font-semibold text-ink-900"><Sparkles size={18} className="text-ai" aria-hidden="true" />Opportunity matrix <span className="text-sm font-normal text-ink-500">fit vs score, click a dot</span></summary>
+      <details open className="group rounded-[20px] border border-line bg-surface p-5">
+        <summary className="flex cursor-pointer items-center gap-2 font-display text-xl font-semibold text-ink-900"><Sparkles size={18} className="text-ai" aria-hidden="true" />Who is worth your time? <span className="text-sm font-normal text-ink-500">a map of every scored investor</span></summary>
         <div className="mt-3"><OpportunityMatrix cards={allCards} /></div>
       </details>
     </div>

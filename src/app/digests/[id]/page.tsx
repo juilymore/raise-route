@@ -7,7 +7,7 @@ import { Card, CardTitle, Stat } from "@/components/ui/cards";
 import { pageTitle } from "@/config/brand";
 import { currentIsFounder } from "@/lib/founder/server";
 import { getDigest } from "@/lib/db/readDb";
-import { DIGEST_STATUS } from "@/components/ui/digestStatus";
+import { DIGEST_STATUS, friendlyDigestError } from "@/components/ui/digestStatus";
 
 export const metadata: Metadata = { title: pageTitle("Digest") };
 export const dynamic = "force-dynamic";
@@ -35,17 +35,17 @@ export default async function DigestPage({ params }: { params: Promise<{ id: str
         <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-ink-500"><span title={s.help} className={`rounded-full px-2.5 py-1 text-xs font-semibold ${s.cls}`}>{s.label}</span>run {d.digest.run_key} · to {d.digest.recipient}</p>
       </header>
       <Card>
-        <CardTitle>Delivery</CardTitle>
+        <CardTitle>Was it delivered?</CardTitle>
         <p className="text-sm text-ink-700">{s.help}</p>
         <dl className="mt-3 grid gap-3 sm:grid-cols-3">
-          <Stat label="Provider message id" value={d.digest.provider_message_id ?? "none"} />
+          <Stat label="Email service reference" value={d.digest.provider_message_id ?? "none"} />
           <Stat label="Sent at" value={d.digest.sent_at ? d.digest.sent_at.slice(0, 16).replace("T", " ") + " UTC" : "not sent"} />
-          <Stat label="Error" value={d.digest.error ?? "none"} />
+          <Stat label="Problem" value={friendlyDigestError(d.digest.error) ?? "none"} />
         </dl>
-        {founder && d.digest.status !== "SENT" && <div className="mt-4"><DigestActions runId={d.digest.run_id} label="Refresh status" /></div>}
+        {founder && d.digest.status !== "SENT" && <div className="mt-4"><DigestActions runId={d.digest.run_id} label="Preview again" /></div>}
       </Card>
       <Card>
-        <CardTitle>The exact email</CardTitle>
+        <CardTitle>The email as written</CardTitle>
         <iframe title="Email preview" sandbox="" srcDoc={d.html} className="h-[640px] w-full rounded-xl border border-line bg-white" />
       </Card>
       <Card>

@@ -6,6 +6,7 @@ import { Card, CardTitle, Stat } from "@/components/ui/cards";
 import { pageTitle } from "@/config/brand";
 import { getRunDetail } from "@/lib/db/readDb";
 import { RUN_STATUS } from "@/components/ui/runStatus";
+import { RunActions } from "@/components/founder/RunActions";
 
 export const metadata: Metadata = { title: pageTitle("Run") };
 export const dynamic = "force-dynamic";
@@ -41,6 +42,7 @@ export default async function RunPage({ params }: { params: Promise<{ id: string
       <header>
         <h1 className="font-display text-[26px] font-bold text-ink-900 sm:text-[30px]">{run.run_key}</h1>
         <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-ink-500"><span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${st.cls}`}>{st.label}</span>trigger: {run.trigger} · window {run.window_start} → {run.window_end} · scoring {run.scoring_version} · model {run.model_primary}</p>
+        <RunActions running={run.status === "RUNNING"} hasProblems={run.vcs_partial + run.vcs_failed > 0 || run.error_count > 0} />
       </header>
 
       <Card>

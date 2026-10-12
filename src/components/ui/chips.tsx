@@ -2,13 +2,13 @@ import clsx from "clsx";
 import { AlertTriangle, CircleSlash, Eye, PauseCircle, Reply, Send, type LucideIcon } from "lucide-react";
 
 export const ACTION_STYLE: Record<string, { label: string; bg: string; fg: string; dot: string }> = {
-  REACH_OUT_NOW: { label: "Reach out now", bg: "#DCFCE7", fg: "#166534", dot: "#22C55E" },
-  FOLLOW_UP_NOW: { label: "Follow up now", bg: "#CCFBF1", fg: "#115E59", dot: "#14B8A6" },
+  REACH_OUT_NOW: { label: "Reach out now", bg: "#FFEBD9", fg: "#9A3412", dot: "#F97316" },
+  FOLLOW_UP_NOW: { label: "Follow up now", bg: "#E4E7FF", fg: "#3730A3", dot: "#6366F1" },
   MONITOR: { label: "Monitor", bg: "#DBEAFE", fg: "#1E40AF", dot: "#3B82F6" },
-  HOLD: { label: "Hold", bg: "#E5E7EB", fg: "#374151", dot: "#9CA3AF" },
-  DONT_PRIORITIZE: { label: "Don't prioritize", bg: "#F3F4F6", fg: "#6B7280", dot: "#D1D5DB" },
-  ASSESSMENT_INCOMPLETE: { label: "Incomplete", bg: "#FFEDD5", fg: "#9A3412", dot: "#F97316" },
-  NOT_ASSESSED: { label: "Not assessed yet", bg: "#F3F4F6", fg: "#6B7280", dot: "#D1D5DB" },
+  HOLD: { label: "On hold", bg: "#FEF3C7", fg: "#92400E", dot: "#F59E0B" },
+  DONT_PRIORITIZE: { label: "Don't prioritize", bg: "#F1F5F9", fg: "#64748B", dot: "#CBD5E1" },
+  ASSESSMENT_INCOMPLETE: { label: "Incomplete", bg: "#FFE4E6", fg: "#9F1239", dot: "#F43F5E" },
+  NOT_ASSESSED: { label: "Not assessed yet", bg: "#F1F5F9", fg: "#64748B", dot: "#CBD5E1" },
 };
 
 export const ACTION_ICON: Record<string, LucideIcon> = {
@@ -20,7 +20,7 @@ export const ACTION_HELP: Record<string, string> = {
   REACH_OUT_NOW: "Strong, fresh and relevant. Send your first message now.",
   FOLLOW_UP_NOW: "You already know them and they did something new. Follow up now.",
   MONITOR: "Some activity, not strong enough yet. Keep an eye on them.",
-  HOLD: "Do not contact yet: you spoke recently, are waiting for a reply or set a reconnect date.",
+  HOLD: "You are already in touch (emailed, waiting for a reply, in a conversation) or set a reconnect date. Do not message again yet.",
   DONT_PRIORITIZE: "Nothing relevant or recent. Spend your time elsewhere.",
   ASSESSMENT_INCOMPLETE: "A source could not be checked, so we cannot say. Not the same as quiet.",
   NOT_ASSESSED: "Not checked yet.",

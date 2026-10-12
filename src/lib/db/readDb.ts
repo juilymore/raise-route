@@ -82,6 +82,19 @@ export async function getRunProgress(runId: string) {
   return { total: r?.total ?? 0, done: r?.done ?? 0 };
 }
 
+/** Why investors in the latest run could not be fully checked, in plain counts. */
+export async function getIncompleteReasons() {
+  const [r] = await query<{ total: number; blocked: number; source_failed: number; backlog: number }>(
+    `select count(*)::int as total,
+            count(*) filter (where (stats->'candidates'->>'fetch_failed')::int > 0)::int as blocked,
+            count(*) filter (where stats->'channels' @> '{"B":"fail"}' or stats->'channels' @> '{"C":"fail"}' or stats->'channels' @> '{"A":"fail"}')::int as source_failed,
+            count(*) filter (where (stats->'candidates'->>'backlog')::int > 0)::int as backlog
+       from public.run_tasks
+      where run_id = (select id from public.pipeline_runs order by started_at desc limit 1) and status = 'PARTIAL'`,
+  ).catch(() => []);
+  return { total: r?.total ?? 0, blocked: r?.blocked ?? 0, sourceFailed: r?.source_failed ?? 0, backlog: r?.backlog ?? 0 };
+}
+
 export async function getLastRun(): Promise<RunSummary | null> {
   const r = await listRuns(1);
   return r[0] ?? null;
@@ -241,6 +254,7 @@ export async function getVcDetail(slug: string) {
       [vc.id],
     )
   ).map((h) => ({ id: String(h.id), at: T(h.created_at)!, action: String(h.action), score: h.follow_up_score === null ? null : Number(h.follow_up_score), reason: String(h.reason), status: String(h.assessment_status), version: String(h.scoring_version), runKey: String(h.run_key) }));
+  const noteHistory = (await query("select id, old_note, new_note, changed_at from public.vc_note_history where vc_id = $1 order by changed_at desc limit 50", [vc.id]).catch(() => [])).map((n) => ({ id: String(n.id), old_note: (n.old_note as string | null) ?? null, new_note: (n.new_note as string | null) ?? null, at: T(n.changed_at)! }));
   const [task] = await query("select stats from public.run_tasks where run_id = $1 and vc_id = $2 limit 1", [vc.last_run_id, vc.id]);
   const parsed = vcRowSchema.parse(vc);
   return {
@@ -259,6 +273,7 @@ export async function getVcDetail(slug: string) {
     },
     signals,
     history,
+    noteHistory,
     taskStats: (task?.stats as Record<string, unknown> | undefined) ?? null,
   };
 }

@@ -1,8 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import type { GroupRows } from "@/lib/config/effective";
+
+const MAIN = ["max_points", "actions"];
 
 /** The scoring rubric as editable tables. Code applies these numbers; Gemini never sees or changes them. Takes effect on the next run. */
 export function ScoringEditor({ groups, version, edited }: { groups: GroupRows[]; version: string; edited: boolean }) {
@@ -47,39 +50,47 @@ export function ScoringEditor({ groups, version, edited }: { groups: GroupRows[]
         Each investor&apos;s score is 100 points made of the factors below. These numbers are applied by code, not by AI. Change a number and press Save; the next run uses it.
         Rubric in use: <strong>{version}</strong>{edited ? " (edited)" : " (default)"}.
       </p>
-      {groups.filter((g) => g.rows.length > 0).map((g) => (
-        <section key={g.key}>
-          <h3 className="font-display text-base font-semibold text-ink-900">
-            {g.title}
-            {g.key === "max_points" && <span className={`ml-2 text-xs font-medium ${pointsTotal === 100 ? "text-emerald-700" : "text-red-700"}`}>total {pointsTotal} / 100</span>}
-          </h3>
-          <p className="text-xs text-ink-500">{g.hint}</p>
-          <div className="mt-2 overflow-x-auto rounded-xl border border-line">
-            <table className="w-full min-w-[420px] text-left text-[13px]">
-              <thead className="bg-bg text-ink-500">
-                <tr>
-                  <th scope="col" className="px-3 py-2 font-semibold">Item</th>
-                  <th scope="col" className="px-3 py-2 text-right font-semibold">Default</th>
-                  <th scope="col" className="px-3 py-2 text-right font-semibold">Your value</th>
-                </tr>
-              </thead>
-              <tbody>
-                {g.rows.map((r) => {
-                  const changed = Number(vals[r.path]) !== r.base;
-                  return (
-                    <tr key={r.path} className="border-t border-line">
-                      <td className="px-3 py-1.5 capitalize text-ink-900">{r.label}</td>
-                      <td className="px-3 py-1.5 text-right tabular-nums text-ink-500">{r.base}</td>
-                      <td className="px-3 py-1.5 text-right">
-                        <input aria-label={`${g.title}: ${r.label}`} inputMode="decimal" value={vals[r.path]} onChange={(e) => setVals({ ...vals, [r.path]: e.target.value })} className={`${cell} ${changed ? "border-brand bg-brand/5" : ""}`} />
-                      </td>
+      {([["Main settings", MAIN], ["Advanced (fine tuning, most people never need these)", null]] as const).map(([heading, keys]) => (
+        <div key={heading} className="space-y-2">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-ink-500">{heading}</h3>
+          {groups.filter((g) => g.rows.length > 0 && (keys ? keys.includes(g.key) : !MAIN.includes(g.key))).map((g) => (
+            <details key={g.key} open={!!keys} className="group rounded-xl border border-line bg-white">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3">
+                <span>
+                  <span className="font-display text-[15px] font-semibold text-ink-900">{g.title}</span>
+                  {g.key === "max_points" && <span className={`ml-2 text-xs font-medium ${pointsTotal === 100 ? "text-emerald-700" : "text-red-700"}`}>total {pointsTotal} / 100</span>}
+                  <span className="block text-xs text-ink-500">{g.hint}</span>
+                </span>
+                <ChevronDown size={16} className="shrink-0 text-ink-500 transition-transform group-open:rotate-180" aria-hidden="true" />
+              </summary>
+              <div className="overflow-x-auto border-t border-line">
+                <table className="w-full min-w-[420px] text-left text-[13px]">
+                  <thead className="bg-bg text-ink-500">
+                    <tr>
+                      <th scope="col" className="px-4 py-2 font-semibold">Item</th>
+                      <th scope="col" className="px-3 py-2 text-right font-semibold">Default</th>
+                      <th scope="col" className="px-4 py-2 text-right font-semibold">Your value</th>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </section>
+                  </thead>
+                  <tbody>
+                    {g.rows.map((r) => {
+                      const changed = Number(vals[r.path]) !== r.base;
+                      return (
+                        <tr key={r.path} className="border-t border-line">
+                          <td className="px-4 py-1.5 capitalize text-ink-900">{r.label}</td>
+                          <td className="px-3 py-1.5 text-right tabular-nums text-ink-500">{r.base}</td>
+                          <td className="px-4 py-1.5 text-right">
+                            <input aria-label={`${g.title}: ${r.label}`} inputMode="decimal" value={vals[r.path]} onChange={(e) => setVals({ ...vals, [r.path]: e.target.value })} className={`${cell} ${changed ? "border-brand bg-brand/5" : ""}`} />
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </details>
+          ))}
+        </div>
       ))}
       <div className="flex flex-wrap items-center gap-3">
         <button type="button" disabled={busy} onClick={save} className="min-h-[44px] rounded-xl bg-brand px-4 text-sm font-semibold text-white disabled:opacity-50">Save rubric</button>

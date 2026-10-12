@@ -59,3 +59,14 @@ body {
 .rr-lift { transition: transform .18s ease, box-shadow .18s ease; }
 .rr-lift:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(14,31,43,.12); }
 .rr-cloud { animation: rr-cloud 9s ease-in-out infinite alternate; }
+
+/* Card effects */
+.rr-lift { position: relative; }
+.rr-lift::after { content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; background: linear-gradient(115deg, transparent 38%, rgba(255,255,255,.65) 50%, transparent 62%); transform: translateX(-130%); transition: transform .7s ease; }
+.rr-lift:hover::after { transform: translateX(130%); }
+@keyframes rr-ring-draw { from { stroke-dasharray: 0 999; } }
+.rr-ring { animation: rr-ring-draw .9s ease-out; }
+@keyframes rr-glow { 0%, 100% { box-shadow: 0 0 0 0 rgba(249,115,22,.0); } 50% { box-shadow: 0 0 0 5px rgba(249,115,22,.14); } }
+.rr-glow { animation: rr-glow 2.6s ease-in-out infinite; }
+@keyframes rr-shimmer { to { background-position: -200% 0; } }
+.rr-shimmer-text { background: linear-gradient(90deg, #fff 0%, #ffe8c2 25%, #fff 50%); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: rr-shimmer 4s linear infinite; }

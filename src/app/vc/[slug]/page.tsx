@@ -51,7 +51,7 @@ export default async function VcPage({ params }: { params: Promise<{ slug: strin
     return <div className="mx-auto max-w-xl py-16 text-center text-ink-500">The database could not be reached. Please try again in a moment.</div>;
   }
   if (!data) notFound();
-  const { vc, signals, history, taskStats } = data;
+  const { vc, signals, history, noteHistory, taskStats } = data;
   const founder = await currentIsFounder().catch(() => false);
   const recId = founder ? await getLatestRecommendationId(vc.id).catch(() => null) : null;
   const drafts = founder ? await listDrafts(vc.id).catch(() => []) : [];
@@ -63,6 +63,7 @@ export default async function VcPage({ params }: { params: Promise<{ slug: strin
     ...history.map((h) => ({ key: `a-${h.id}`, by: "ai" as const, at: h.at, title: `Assessed: ${(h.action ?? "").replaceAll("_", " ").toLowerCase()}${h.score !== null ? ` (score ${h.score})` : ""}`, body: h.reason, url: null as string | null })),
     ...signals.map((s) => ({ key: `s-${s.id}`, by: "ai" as const, at: s.event_date, title: `Signal: ${s.title}`, body: s.summary, url: s.primary_source_url as string | null })),
     ...vc.contact_history.map((h, i) => ({ key: `c-${i}`, by: "you" as const, at: String(h.at ?? ""), title: String(h.type ?? "contact").replaceAll("_", " "), body: String(h.summary ?? ""), url: null as string | null })),
+    ...noteHistory.map((n) => ({ key: `n-${n.id}`, by: "you" as const, at: n.at, title: "Notes changed", body: `${n.old_note ? `Before: "${n.old_note}"` : "Before: (empty)"} → Now: "${n.new_note ?? ""}"`, url: null as string | null })),
   ].sort((a, b) => b.at.localeCompare(a.at));
   const channels = (taskStats?.channels ?? null) as Record<string, string> | null;
   const CH: Record<string, string> = { A: "official feed", B: "news", C: "sector feeds", D: "grounded search" };
@@ -166,6 +167,12 @@ export default async function VcPage({ params }: { params: Promise<{ slug: strin
           <div className="mt-4 rounded-xl bg-amber-50 p-3 text-sm text-amber-950">
             <div className="mb-1 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-amber-800">Vikram&apos;s notes</div>
             {vc.personal_notes ?? "No notes."}
+            {noteHistory.length > 0 && (
+              <details className="mt-2 text-xs text-amber-900">
+                <summary className="cursor-pointer font-semibold">Earlier versions ({noteHistory.length})</summary>
+                <ul className="mt-1 space-y-1.5">{noteHistory.map((n) => <li key={n.id}><span className="tabular-nums text-amber-800">{n.at.slice(0, 16).replace("T", " ")}</span>: {n.old_note ? `"${n.old_note}"` : "(was empty)"}</li>)}</ul>
+              </details>
+            )}
           </div>
           <p className="mt-3 text-xs text-ink-500">The system never edits this panel; only you do.</p>
           {founder && <RelationshipEditor vcId={vc.id} status={vc.contact_status} lastContact={vc.last_contact_date} reconnectAfter={vc.reconnect_after} notes={vc.personal_notes} />}

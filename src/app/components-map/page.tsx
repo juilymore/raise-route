@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { ArrowRight } from "lucide-react";
 import { Card, CardTitle } from "@/components/ui/cards";
 import { BRAND, pageTitle } from "@/config/brand";
 
@@ -7,45 +6,43 @@ export const metadata: Metadata = { title: pageTitle("Components map") };
 
 /** The exam's Components Map (deliverable E6). Source of truth: docs/02_ARCHITECTURE_AND_COMPONENTS_MAP.md. */
 const COMPONENTS: Array<[string, string, string, string, string]> = [
-  ["C1", "Web app + API", "UI and serverless endpoints", "Next.js App Router, TypeScript, Vercel; deployed from the GitHub repo (main)", "E4 deployed, public URL; E5 repo"],
-  ["C2", "Scheduler", "Twice-weekly trigger (Mon + Thu 03:00 UTC), plus founder Run now", "Vercel Cron, /api/cron/run (bearer secret)", "E7 twice a week"],
-  ["C4", "Database", "Single source of truth, guards, RPC functions", "Neon Postgres", "E11 live table"],
-  ["C5", "Orchestrator", "Idempotent run_key, task queue, time-boxed chunks that continue themselves, Resume", "TypeScript + Postgres functions", "E7 reliability at 50 investors"],
-  ["C6", "Source discovery", "Official feeds, Google News RSS, nine sector feeds (matched to names), optional Gemini grounded search (Google SDK path only) and Tavily/Exa raw results", "fast-xml-parser, fetch", "E1 live data, E9 signal types"],
-  ["C7", "Fetcher + extractor", "SSRF-safe fetch, robots.txt, size/time caps, article text, date ladder", "undici, cheerio", "E9 30-day correctness"],
-  ["C8", "Entity resolver", "Alias index, ambiguous-name guard (Accel, Eclipse...), firm vs person attribution", "TypeScript", "E9 right investor"],
-  ["C9", "Gemini Flash analyst", "Structured extraction of what happened, with a verbatim quote. Never scores or decides", "Gemini Flash via @google/genai or OpenRouter (google/gemini-3.7-flash), zod", "E3 Gemini only"],
-  ["C10", "Validators", "V1-V15 including quote verification", "TypeScript pure functions", "E9 observable, real"],
-  ["C11", "Deduper", "One event = one signal; syndicated copies are not independent", "TypeScript", "quality"],
-  ["C12", "Scoring engine", "100-point transparent score, versioned, config-driven; matches 30 golden vectors. Numbers are editable in Settings (validated, applied by code)", "TypeScript + config/scoring.v1.json + saved overrides", "E8 the why"],
-  ["C13", "Action engine", "Relationship-aware action (reach out / follow up / monitor / hold / don't prioritize / incomplete)", "TypeScript", "E8, E10 quiet investors"],
-  ["C14", "Integrity Guard", "No table privileges for the app role, one write function, a trigger, and a SHA-256 receipt per run", "Postgres grants, SECURITY DEFINER functions, triggers", "E12 + E13 never overwrite notes"],
-  ["C15", "Snapshot writer", "Immutable recommendation per run (relationship snapshot has no notes)", "Postgres + immutability trigger", "history, explainability"],
-  ["C18", "Dashboard", "Command Centre, pipeline, investor page with full history, runs, settings (company + scoring rubric)", "Next.js, Tailwind", "E8, E10 usability"],
-  ["C20", "Observability", "Run audit, rejected evidence, source health, AI ledger, integrity receipts", "pipeline_runs, run_tasks, evidence_candidates, llm_calls", "trust, grading evidence"],
-  ["C21", "Auth + rate limiting", "No login; Origin checks and rate limits on editing routes; bearer secret for cron; the database blocks system-column writes", "zod", "public URL is safe"],
-  ["C22", "Quality gates", "Unit, golden, integration, evals, SQL guard tests, compliance script, CI", "Vitest, scripts/check-compliance.mjs", "credibility"],
+  ["C1", "Website", "The pages you see, and the code behind them. Code lives on GitHub; Vercel publishes it.", "Next.js, Vercel, GitHub", "Live site (E4) and code repository (E5)"],
+  ["C2", "Scheduler", "Starts a scan every Monday and Thursday morning, or when you press Run now.", "Vercel Cron", "Runs twice a week (E7)"],
+  ["C4", "Database", "Stores the 50 investors, what was found, the scores and your notes.", "Neon Postgres", "A live table that stays current (E11)"],
+  ["C5", "Scan manager", "Splits a scan into one small job per investor and picks up where it left off if it stops.", "TypeScript + database queue", "Reliable at 50 investors"],
+  ["C6", "Source collector", "Looks for fresh news and posts about each investor: their own blog, Google News and logistics trade-press feeds.", "RSS and web feeds", "Live data (E1), 30-day signals (E9)"],
+  ["C7", "Page reader", "Opens each article safely and finds its real publish date.", "Safe fetcher, date rules", "Only the last 30 days counts (E9)"],
+  ["C8", "Name checker", "Checks the article is about the right investor, not a company with a similar name.", "TypeScript", "Right investor, right person (E9)"],
+  ["C9", "Gemini Flash (AI)", "Reads the article and writes down what happened with an exact quote. It never gives scores or decisions.", "Gemini Flash", "Gemini only (E3)"],
+  ["C10", "Fact checker", "Throws out anything where the quote is not on the page, the date is too old, or the story is a copy of one already counted.", "TypeScript rules", "Real and observable (E9)"],
+  ["C12", "Scoring", "Gives each investor 0 to 100 from a points table. You can edit the table in Settings.", "TypeScript + editable rubric", "Explains why (E8)"],
+  ["C13", "Action picker", "Turns the score and your contact history into one action: reach out, follow up, monitor, on hold.", "TypeScript", "Who to contact and why (E8), quiet investors (E10)"],
+  ["C14", "Data guard", "Makes it impossible for a scan to change your notes or contact history, and proves it with a before-and-after check.", "Database permissions, one safe write function, triggers", "Notes never overwritten (E12, E13)"],
+  ["C15", "History saver", "Keeps a permanent copy of every scan result, so earlier results are never rewritten.", "Database", "History and explanation"],
+  ["C18", "Dashboard", "Today's contacts, what changed, quiet investors, each investor's page and Settings.", "Next.js, Tailwind", "Easy to act on (E8, E10)"],
+  ["C20", "Run logs", "Shows what each scan did, what it rejected and why, and every AI call.", "Database tables", "Trust and proof"],
+  ["C21", "Safety rules", "Limits on repeated requests, a secret key for the scheduler, and database rules that block changes to protected data.", "Origin checks, rate limits, secrets", "Safe public site"],
+  ["C22", "Automatic checks", "Tests that run before any change goes live.", "Vitest, compliance script", "Credibility"],
 ];
-
-const FLOW = ["Trigger (cron or Run now)", "Orchestrator + task queue", "Source discovery", "SSRF-safe fetch + date ladder", "Entity check", "Gemini extract (no tools)", "Validators + dedupe", "Score + action (code)", "apply_assessment (only write to your table)"];
 
 const STEPS = [
-  "A trigger hits /api/cron/run (bearer secret) or the founder presses Run now.",
-  "The orchestrator starts an idempotent run and stores a fingerprint of your data. One task is created per investor.",
-  "Per investor, sources are gathered: official feed, Google News, and the shared sector feeds (matched to the investor's names).",
-  "Each candidate page is fetched safely and its publication date is resolved (never from dateModified).",
-  "The investor is confirmed to be the one the page is about; Gemini returns a strict JSON event with a verbatim quote.",
-  "Code verifies the quote exists in the page, the date is within 30 days, the role is real activity, and the story is not a duplicate. Rejected evidence is kept with a reason.",
-  "Pure code computes the explainable score and the relationship-aware action and writes an immutable snapshot.",
-  "apply_assessment() updates only the signal columns of your table. Your notes and contact history cannot change; the run stores a before/after receipt.",
+  "Every Monday and Thursday morning (or when you press Run now) a scan starts.",
+  "The scan manager makes one small job for each of the 50 investors and saves a fingerprint of your notes and contact history.",
+  "For each investor we look for fresh news and posts: their own blog, Google News and logistics trade-press feeds.",
+  "Each article is opened safely and its real publish date is found. Anything older than 30 days is dropped.",
+  "We check the article is really about that investor. Then Gemini writes down what happened, with an exact quote from the page.",
+  "Code double-checks the quote is on the page, the date is recent and the story is not a copy. Rejected items are kept with the reason.",
+  "Code gives the investor a score from 0 to 100 and picks one action, using your contact history (for example: do not email twice in a week).",
+  "Only the signal columns of the investor table are updated. Your notes and contact history cannot change, and a before-and-after check proves it.",
 ];
+
 
 export default function ComponentsMapPage() {
   return (
     <div className="mx-auto max-w-[1100px] space-y-6">
       <div>
         <h1 className="font-display text-[28px] font-bold text-ink-900 sm:text-[32px]">Components map</h1>
-        <p className="mt-1 text-sm text-ink-500">How {BRAND.name} is built: what each part does, what it uses, and which exam requirement it serves.</p>
+        <p className="mt-1 text-sm text-ink-500">How {BRAND.name} works, in plain words: who does what, from the trigger to the result.</p>
       </div>
 
       <Card>
@@ -55,23 +52,10 @@ export default function ComponentsMapPage() {
       </Card>
 
       <Card>
-        <CardTitle>One run, end to end</CardTitle>
-        <ol className="flex flex-wrap items-center gap-2 text-sm" aria-label="Pipeline flow">
-          {FLOW.map((s, i) => (
-            <li key={s} className="flex items-center gap-2">
-              <span className={`rounded-xl border px-3 py-2 ${i === FLOW.length - 1 ? "border-brand bg-brand text-white" : "border-line bg-bg text-ink-900"}`}>{s}</span>
-              {i < FLOW.length - 1 && <ArrowRight size={16} className="text-ink-500" aria-hidden="true" />}
-            </li>
-          ))}
-        </ol>
-        <p className="mt-4 text-xs text-ink-500">External live data: Google News RSS, VC blogs and podcasts, sector news feeds, Gemini grounded search (optional). Storage: Neon Postgres. AI: Gemini Flash only.</p>
-      </Card>
-
-      <Card>
         <CardTitle>Components</CardTitle>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[820px] text-left text-[13px]">
-            <thead className="text-ink-500"><tr><th className="py-2 pr-3 font-semibold">ID</th><th className="px-3 font-semibold">Component</th><th className="px-3 font-semibold">Responsibility</th><th className="px-3 font-semibold">Technology</th><th className="px-3 font-semibold">Requirement served</th></tr></thead>
+            <thead className="text-ink-500"><tr><th className="py-2 pr-3 font-semibold">ID</th><th className="px-3 font-semibold">Component</th><th className="px-3 font-semibold">What it does</th><th className="px-3 font-semibold">Built with</th><th className="px-3 font-semibold">Why it matters</th></tr></thead>
             <tbody>
               {COMPONENTS.map(([id, name, what, tech, req]) => (
                 <tr key={id} className="border-t border-line align-top"><td className="py-2 pr-3 font-mono text-xs">{id}</td><td className="px-3 font-medium text-ink-900">{name}</td><td className="px-3 text-ink-700">{what}</td><td className="px-3 text-ink-700">{tech}</td><td className="px-3 text-ink-700">{req}</td></tr>

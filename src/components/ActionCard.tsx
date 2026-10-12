@@ -13,7 +13,7 @@ export function ActionCard({ c, founder = false, index = 0 }: { c: ActionCardDat
     <article className="rr-fade rr-lift relative overflow-hidden rounded-2xl border border-line bg-surface p-4 pl-5" style={{ ["--d" as string]: `${index * 70}ms` }}>
       <span className="absolute inset-y-0 left-0 w-1.5" style={{ background: s.dot }} aria-hidden="true" />
       <div className="flex items-start gap-3">
-        <ScoreRing score={c.score} />
+        <ScoreRing score={c.score} color={s.dot} />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
             <h3 className="font-display text-base font-semibold text-ink-900"><Link href={`/vc/${c.slug}`} className="hover:text-brand">{c.firm}</Link></h3>
