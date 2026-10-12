@@ -87,6 +87,12 @@ class FakeStore implements PipelineStore {
   llmTotals = async () => ({ calls: 0, tokensIn: 0, tokensOut: 0, searchCalls: 0 });
   findRunningRun = async () => undefined as never;
   failExhaustedTasks = async () => [] as string[];
+  digests = new Map<string, Row>();
+  digestSnapshot = async () => [] as never;
+  getDigestByKey = async (k: string) => this.digests.get(k) as never;
+  insertDigest = async (row: Row) => { const r = { id: `dg${this.digests.size + 1}`, ...row }; this.digests.set(String(row.digest_key), r); return r as never; };
+  insertDigestItems = async () => {};
+  updateDigestStatus = async (id: string, p: Row) => { for (const d of this.digests.values()) if (d.id === id) Object.assign(d, p); };
 }
 
 const vc = (n: number, extra: Row = {}): Row => ({

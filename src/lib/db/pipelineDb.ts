@@ -205,6 +205,55 @@ export const pipelineDb = {
     );
     return rows.map((r) => r.vc_id);
   },
+  // ---- digest (P11): built from THIS run's immutable recommendation snapshots
+  async digestSnapshot(runId: string) {
+    const rows = await query(
+      `select r.id as recommendation_id, v.slug, v.firm, r.action, r.hold_reason, r.follow_up_score as score, r.assessment_status, r.reason,
+              s.title as signal_title, s.event_date::text as event_date, s.primary_source_url as source_url,
+              prev.action as prev_action, prev.follow_up_score as prev_score
+         from public.recommendations r
+         join public.vc_pipeline v on v.id = r.vc_id
+         left join lateral (select x.title, x.event_date, x.primary_source_url from public.signals x where x.id = any(r.signal_ids) order by x.event_date desc limit 1) s on true
+         left join lateral (select p.action, p.follow_up_score from public.recommendations p where p.vc_id = r.vc_id and p.created_at < r.created_at order by p.created_at desc limit 1) prev on true
+        where r.run_id = $1`,
+      [runId],
+    );
+    return rows.map((r) => {
+      const url = (r.source_url as string | null) ?? null;
+      let domain: string | null = null;
+      try { domain = url ? new URL(url).hostname.replace(/^www./, "") : null; } catch { domain = null; }
+      return {
+        recommendationId: String(r.recommendation_id), slug: String(r.slug), firm: String(r.firm), action: String(r.action), holdReason: (r.hold_reason as string | null) ?? null,
+        score: r.score === null ? null : Number(r.score), assessmentStatus: String(r.assessment_status), reason: String(r.reason),
+        signalTitle: (r.signal_title as string | null) ?? null, eventDate: (r.event_date as string | null) ?? null, sourceUrl: url, sourceDomain: domain,
+        prevAction: (r.prev_action as string | null) ?? null, prevScore: r.prev_score === null || r.prev_score === undefined ? null : Number(r.prev_score),
+      };
+    });
+  },
+  async getDigestByKey(key: string) {
+    const [r] = await query<Row>("select * from public.email_digests where digest_key = $1", [key]);
+    return r;
+  },
+  async insertDigest(row: Row) {
+    const [r] = await query<Row>(
+      "insert into public.email_digests (run_id, digest_key, recipient, subject, html, text_body, status) values ($1,$2,$3,$4,$5,$6,$7) on conflict (digest_key) do nothing returning *",
+      [row.run_id, row.digest_key, row.recipient, row.subject, row.html, row.text_body, row.status ?? "PREVIEW"],
+    );
+    if (r) return r;
+    const [existing] = await query<Row>("select * from public.email_digests where digest_key = $1", [row.digest_key]);
+    return existing;
+  },
+  async insertDigestItems(digestId: string, sections: Array<{ section: string; recommendationId: string; rank: number }>) {
+    for (const s of sections) {
+      await query("insert into public.email_digest_items (digest_id, recommendation_id, section, rank) values ($1,$2,$3,$4) on conflict do nothing", [digestId, s.recommendationId, s.section, s.rank]);
+    }
+  },
+  async updateDigestStatus(id: string, p: { status: "SENDING" | "SENT" | "FAILED" | "DEV_NOT_SENT"; provider?: string; providerMessageId?: string; error?: string | null; sentAt?: string }) {
+    await query(
+      "update public.email_digests set status = $2, provider = coalesce($3, provider), provider_message_id = coalesce($4, provider_message_id), error = $5, sent_at = coalesce($6::timestamptz, sent_at) where id = $1",
+      [id, p.status, p.provider ?? null, p.providerMessageId ?? null, p.error ?? null, p.sentAt ?? null],
+    );
+  },
   async findRunningRun() {
     const [r] = await query<Row>("select id, run_key, started_at from public.pipeline_runs where status = 'RUNNING' order by started_at desc limit 1");
     return r;

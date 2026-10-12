@@ -8,5 +8,5 @@ export type PipelineStore = Pick<
   typeof pipelineDb,
   | "listVcs" | "getCompanyProfile" | "getRun" | "startRun" | "finalizeRun" | "claimRunTasks" | "ensureTasks" | "taskCounts" | "taskStats"
   | "finishTask" | "knownCandidateUrls" | "upsertCandidate" | "updateCandidate" | "upsertSignal" | "signalsInWindow" | "insertRecommendation"
-  | "applyAssessment" | "recordSourceHealth" | "llmTotals" | "findRunningRun" | "failExhaustedTasks"
+  | "applyAssessment" | "recordSourceHealth" | "llmTotals" | "findRunningRun" | "failExhaustedTasks" | "digestSnapshot" | "getDigestByKey" | "insertDigest" | "insertDigestItems" | "updateDigestStatus"
 >;

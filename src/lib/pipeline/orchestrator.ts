@@ -7,6 +7,7 @@ import { getEnv } from "@/lib/env";
 import { SafeFetcher } from "@/lib/sources/fetcher";
 import { fetchSectorFeeds, matchItemsToVcs } from "@/lib/sources/sectorFeeds";
 import type { PipelineStore } from "./store";
+import { createAndMaybeSendDigest } from "@/lib/digest/send";
 import { processVc, type TaskDeps, type VcInput } from "./task";
 
 /**
@@ -192,6 +193,16 @@ export async function runPipeline(opts: RunOptions): Promise<RunResult> {
     errors,
   });
   void daysBetween;
+  // S5: the digest is built from this run's snapshots. Auto-send ONLY for cron/github runs with DIGEST_AUTO_SEND=true; manual runs never auto-send.
+  // A digest problem never fails the run.
+  try {
+    // use the run's OWN trigger: a cron run that continues in later chunks is invoked as "manual" by /api/pipeline/continue
+    const runTrigger = String(run.trigger);
+    const auto = (runTrigger === "cron" || runTrigger === "github_action") && env.DIGEST_AUTO_SEND;
+    await createAndMaybeSendDigest(db, { runId, send: auto });
+  } catch (e) {
+    console.error("[pipeline] digest step failed:", (e as Error).message);
+  }
   return { runId, runKey, done: true, status: failedTasks.length ? "COMPLETED_WITH_ERRORS" : "COMPLETED", processed, remaining: 0 };
 }
 

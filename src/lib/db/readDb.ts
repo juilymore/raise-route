@@ -287,3 +287,34 @@ export async function getLatestRecommendationId(vcId: string): Promise<string | 
   const [r] = await query<{ id: string }>("select id from public.recommendations where vc_id = $1 order by created_at desc limit 1", [vcId]);
   return r?.id ?? null;
 }
+
+export interface DigestRow {
+  id: string;
+  run_id: string;
+  run_key: string | null;
+  subject: string;
+  recipient: string;
+  status: string;
+  provider_message_id: string | null;
+  error: string | null;
+  sent_at: string | null;
+  created_at: string;
+}
+const toDigest = (d: Row): DigestRow => ({
+  id: String(d.id), run_id: String(d.run_id), run_key: (d.run_key as string | null) ?? null, subject: String(d.subject), recipient: String(d.recipient), status: String(d.status),
+  provider_message_id: (d.provider_message_id as string | null) ?? null, error: (d.error as string | null) ?? null, sent_at: T(d.sent_at), created_at: T(d.created_at)!,
+});
+
+export async function listDigests(limit = 30): Promise<DigestRow[]> {
+  return (await query("select d.id, d.run_id, p.run_key, d.subject, d.recipient, d.status, d.provider_message_id, d.error, d.sent_at, d.created_at from public.email_digests d join public.pipeline_runs p on p.id = d.run_id order by d.created_at desc limit $1", [limit])).map(toDigest);
+}
+
+export async function getDigest(id: string) {
+  const [d] = await query("select d.*, p.run_key from public.email_digests d join public.pipeline_runs p on p.id = d.run_id where d.id = $1", [id]);
+  if (!d) return null;
+  const items = await query(
+    "select i.section, i.rank, v.firm, v.slug from public.email_digest_items i join public.recommendations r on r.id = i.recommendation_id join public.vc_pipeline v on v.id = r.vc_id where i.digest_id = $1 order by array_position(array['REACH_OUT_NOW','FOLLOW_UP_NOW','MONITOR','HOLD','QUIET','CHANGES','INCOMPLETE'], i.section), i.rank",
+    [id],
+  );
+  return { digest: toDigest(d), html: String(d.html), text: String(d.text_body), items: items.map((i) => ({ section: String(i.section), rank: Number(i.rank), firm: String(i.firm), slug: String(i.slug) })) };
+}
