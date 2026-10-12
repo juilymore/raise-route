@@ -39,8 +39,8 @@ for (const lock of ["package-lock.json", "pnpm-lock.yaml", "yarn.lock", "bun.loc
 }
 
 // founderDb may be imported only by founder-facing code (api/founder routes, lib/founder, tests) and itself.
-const FOUNDER_IMPORT = /founderDb(?:.[jt]sx?)?['"`]/;
-const FOUNDER_ALLOWED = /[\/](api[\/]founder|lib[\/]founder|lib[\/]db[\/]founderDb.ts)([\/.]|$)/;
+const FOUNDER_IMPORT = /founderDb(?:\.[jt]sx?)?['"`]/;
+const FOUNDER_ALLOWED = /[\\/](api[\\/]founder|lib[\\/]founder|lib[\\/]db[\\/]founderDb\.ts)([\\/.]|$)/;
 {
   const src = join(ROOT, "src");
   if (existsSync(src)) for (const f of walk(src)) {
@@ -72,7 +72,7 @@ if (existsSync(srcDir)) {
     if (!/\.(tsx|ts|jsx|js)$/.test(f)) continue;
     const txt = readFileSync(f, "utf8");
     if (/^\s*['"]use client['"]/m.test(txt) && SECRET.test(txt)) fail("R3", f, "client component references a server secret");
-    if (/NEXT_PUBLIC_[A-Z0-9_]+/.test(txt.replace(/^s*(//|*).*$/gm, ""))) fail("R3", f, "NEXT_PUBLIC_* variable used: none are allowed (browser needs no secret)");
+    if (/NEXT_PUBLIC_[A-Z0-9_]+/.test(txt.replace(/^\s*(\/\/|\*).*$/gm, ""))) fail("R3", f, "NEXT_PUBLIC_* variable used: none are allowed (browser needs no secret)");
   }
 }
 
