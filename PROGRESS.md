@@ -1,16 +1,14 @@
 # RaiseRoute build progress (resume notes)
 
-Rules from the user: Neon (not Supabase); app name only in src/config/brand.ts; Mon+Thu cron + Run now; do not wait for approval between
-phases, ask only when something is overcomplicated; P10-P13 are done at the very end; P12 optional. Gemini only for AI.
+ALL PHASES P00-P13 DONE (P12 partial: Opportunity Matrix + as-of time travel; demo replay and portfolio-diff not built).
+Live: https://raiseroute.vercel.app (Vercel project raiseroute, cron Mon+Thu 03:00 UTC). Final audit: docs/AUDIT_RESULT.md. Submission notes: docs/SUBMISSION.md.
 
-| Phase | State |
-|---|---|
-| P00-P05 | done and audited (engine 30/30 golden, sources, Gemini layer, evals 40/40 checks, 15 cases) |
-| P06 pipeline | done: live 5-VC and full 50-VC runs COMPLETED, receipt founder_data_intact=true |
-| P07 dashboard | done: /, /pipeline, /vc/[slug], /runs, /runs/[id], /settings; screenshots in docs/screenshots |
-| P08 founder auth | done: signed cookie, guarded routes, Run now/Resume, headers; curl 401/403/200 transcript verified |
-| P09 deploy | DEPLOYED: https://raiseroute.vercel.app (Vercel project raiseroute, env vars set, cron Mon+Thu). Production run via /api/cron/run was started; check it finished. |
-| GitHub public repo | BLOCKED by permission classifier (creating a public repo); needs the user to allow or create it. Code is committed locally. |
-| P10-P13 | not started (user wants these last): feedback/calibration/outreach, digest email, optional wow, hardening + /components-map + /data-honesty + AUDIT_RESULT.md + SUBMISSION.md |
+Open items for the owner:
+1. Create the PUBLIC GitHub repo (blocked for me by the permission classifier): in D:\Claude\raiseroute run
+   gh repo create raiseroute --public --source=. --remote=origin --push   then put the URL in docs/SUBMISSION.md.
+2. Paste the founder passcode (FOUNDER_ACCESS_CODE in .env.local) into docs/SUBMISSION.md before submitting.
+3. Decide whether to send the first digest email (a PREVIEW digest exists; nothing has been sent). DIGEST_AUTO_SEND is false on Vercel.
+4. After the first scheduled run (Thu 15 Oct 2026, 03:00-03:59 UTC) screenshot Vercel > Cron Jobs for E7.
 
-To resume: tell Claude "resume from PROGRESS.md". Run `npm run verify` first. Local dev: `npm run dev`. Run pipeline locally: `npm run pipeline:run`.
+Commands: npm run verify | db:test | db:migrate | db:app-role | pipeline:run | evals | scan:secrets | dev. Redeploy: npx vercel deploy --prod --yes.
+Tip: bash heredocs/node -e strip backslashes in regexes in this environment; use the Write/Edit tools for regex-heavy code.
