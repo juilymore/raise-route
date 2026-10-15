@@ -36,4 +36,4 @@ Method: the `exam-auditor` subagent re-ran commands and queried the live databas
 * **Quiet investor shown in "What changed" as "– → –"**: the row now shows the action change (for example Incomplete → Don't prioritize) instead of dashes.
 * **Public pages show the demo notes**: by design and labelled "Demo data / synthetic" everywhere; stated on `/data-honesty` and in the README.
 * **Run-to-run variation** (50-investor local run: 16 quiet / 7 partial; production run: 7 quiet / 16 partial): the production run skipped grounded search for more investors and some publishers blocked it, so more investors were honestly marked Incomplete. Quiet requires enough sources; the numbers are expected to move between runs.
-* **Open items for the owner**: create the public repo; screenshot the Vercel Cron Jobs page after the first scheduled run; keep `DIGEST_AUTO_SEND=false` unless the first digest has been reviewed.
+* **Open items for the owner**: create the public repo; screenshot the Vercel Cron Jobs page after the first scheduled run; `DIGEST_AUTO_SEND` was false until 15 Oct 2026 (first digest reviewed) and is now true, so each scheduled run emails the digest.

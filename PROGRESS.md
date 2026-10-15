@@ -7,7 +7,7 @@ Open items for the owner:
 1. Create the PUBLIC GitHub repo (blocked for me by the permission classifier): in D:\Claude\raiseroute run
    gh repo create raiseroute --public --source=. --remote=origin --push   then put the URL in docs/SUBMISSION.md.
 2. Paste the founder passcode (FOUNDER_ACCESS_CODE in .env.local) into docs/SUBMISSION.md before submitting.
-3. Decide whether to send the first digest email (a PREVIEW digest exists; nothing has been sent). DIGEST_AUTO_SEND is false on Vercel.
+3. Digest email: the first digest was sent on request (12 Oct 2026). DIGEST_AUTO_SEND was switched to true on Vercel on 15 Oct 2026, so each scheduled run now emails it.
 4. After the first scheduled run (Thu 15 Oct 2026, 03:00-03:59 UTC) screenshot Vercel > Cron Jobs for E7.
 
 Commands: npm run verify | db:test | db:migrate | db:app-role | pipeline:run | evals | scan:secrets | dev. Redeploy: npx vercel deploy --prod --yes.

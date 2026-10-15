@@ -27,5 +27,5 @@ Three real runs exist (5 investors, 50 investors, and one 50-investor run execut
 * Gemini output is not perfectly repeatable; the validators, not the model, make the output trustworthy. Evals: 15 labelled cases, 40/40 checks and 14/14 quotes on the latest run (11/12 quotes on an earlier run; a miss is rejected, never used).
 * Google News links are decoded through an undocumented Google endpoint that may change; failure is reported, never treated as "nothing found".
 * The in-memory rate limiter protects one serverless instance only. The CSP allows inline scripts that Next.js needs.
-* Email: the digest is built and archived; it is sent only on request or after a cron run when `DIGEST_AUTO_SEND=true`. Resend's free sender can only email the account owner.
+* Email: the digest is built and archived after every run. Since 15 Oct 2026 it is emailed automatically after each scheduled (cron) run (`DIGEST_AUTO_SEND=true`); manual runs only build a preview, and it can be sent on request. Until then it was manual: the first digests were sent on request while the recipient address was being fixed. Resend's free sender can only email the account owner.
 * Not built: fixtures-based demo replay and the portfolio-diff detector (optional "wow" items).
